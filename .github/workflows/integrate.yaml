@@ -1,0 +1,93 @@
+# reusable workflow triggered by other actions
+name: CI
+
+on:
+  workflow_call:
+    secrets:
+      CHARMCRAFT_CREDENTIALS:
+        required: true
+
+jobs:
+  lib-check:
+    name: Check libraries
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Check libs
+        uses: canonical/charming-actions/check-libraries@2.3.0
+        with:
+          credentials: "${{ secrets.CHARMCRAFT_CREDENTIALS }}"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+  lint:
+    name: Lint Check
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: sudo apt-get install python3-pip tox
+
+    - name: Lint code
+      run: tox -e lint
+
+  unit:
+    name: Unit Test
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: sudo apt-get install python3-pip tox
+
+    - name: Run unit tests
+      run: tox -e unit
+
+  integration:
+    name: Integration tests (microk8s)
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Maximise GH runner space
+      uses: easimon/maximize-build-space@v8
+      with:
+        root-reserve-mb: 40960
+        remove-dotnet: 'true'
+        remove-haskell: 'true'
+        remove-android: 'true'
+        remove-codeql: 'true'
+        remove-docker-images: 'true'
+    - uses: actions/checkout@v2
+    - name: Setup operator environment
+      uses: charmed-kubernetes/actions-operator@1.1.0
+      with:
+        juju-channel: "3.1/stable"
+        provider: microk8s
+        channel: 1.25-strict/stable
+        microk8s-addons: "dns storage rbac metallb:10.64.140.43-10.64.140.49"
+
+    - name: Run integration tests
+      run: sg snap_microk8s -c "tox -vve integration -- --model kubeflow"
+
+    # On failure, capture debugging resources      
+    - name: Get all
+      run: kubectl get all -A
+      if: failure()
+
+    - name: Get juju status
+      run: juju status
+      if: failure()
+
+    - name: Get workload logs
+      run: kubectl logs --tail 100 -ntesting -lapp.kubernetes.io/name=mlflow-server
+      if: failure()
+
+    - name: Get operator logs
+      run: kubectl logs --tail 100 -ntesting -loperator.juju.is/name=mlflow-server
+      if: failure()
