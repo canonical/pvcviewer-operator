@@ -1,0 +1,53 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: pvcviewer-mutating-webhook-configuration
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    caBundle: {{ cert }}
+    service:
+      name: {{ webhook_service_name }}
+      namespace: {{ namespace }}
+      path: /mutate-kubeflow-org-v1alpha1-pvcviewer
+  failurePolicy: Fail
+  name: mpvcviewer.kb.io
+  rules:
+  - apiGroups:
+    - kubeflow.org
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - pvcviewers
+  sideEffects: None
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: pvcviewer-validating-webhook-configuration
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    caBundle: {{ cert }}
+    service:
+      name: {{ webhook_service_name }}
+      namespace: {{ namespace }}
+      path: /validate-kubeflow-org-v1alpha1-pvcviewer
+  failurePolicy: Fail
+  name: vpvcviewer.kb.io
+  rules:
+  - apiGroups:
+    - kubeflow.org
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - pvcviewers
+  sideEffects: None
