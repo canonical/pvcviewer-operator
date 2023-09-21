@@ -33,7 +33,7 @@ def mocked_kubernetes_service_patch(mocker):
     yield mocked_kubernetes_service_patch
 
 
-def test_not_leader(harness, mocked_kubernetes_service_patch):
+def test_not_leader(harness, mocked_lightkube_client, mocked_kubernetes_service_patch):
     """Test when we are not the leader."""
     harness.begin_with_initial_hooks()
     # Assert that we are not Active, and that the leadership-gate is the cause.
@@ -67,7 +67,7 @@ def test_kubernetes_created_method(
     assert isinstance(harness.charm.kubernetes_resources.status, ActiveStatus)
 
 
-def test_pebble_services_running(harness, mocked_kubernetes_service_patch):
+def test_pebble_services_running(harness, mocked_lightkube_client, mocked_kubernetes_service_patch):
     """Test that if the Kubernetes Component is Active, the pebble services successfully start."""
     # Arrange
     harness.begin()
@@ -89,7 +89,7 @@ def test_pebble_services_running(harness, mocked_kubernetes_service_patch):
     assert service.is_running()
 
 
-def test_get_certs(harness, mocked_kubernetes_service_patch):
+def test_get_certs(harness, mocked_lightkube_client, mocked_kubernetes_service_patch):
     """Test certs generated on init."""
     # Act
     harness.begin()
