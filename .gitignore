@@ -1,0 +1,7 @@
+*.charm
+build/
+__pycache__/
+.tox
+.coverage
+.idea
+.vscode
