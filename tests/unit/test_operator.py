@@ -67,7 +67,9 @@ def test_kubernetes_created_method(
     assert isinstance(harness.charm.kubernetes_resources.status, ActiveStatus)
 
 
-def test_pebble_services_running(harness, mocked_lightkube_client, mocked_kubernetes_service_patch):
+def test_pebble_services_running(
+    harness, mocked_lightkube_client, mocked_kubernetes_service_patch
+):
     """Test that if the Kubernetes Component is Active, the pebble services successfully start."""
     # Arrange
     harness.begin()
