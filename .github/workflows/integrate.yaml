@@ -10,7 +10,7 @@ on:
 jobs:
   lib-check:
     name: Check libraries
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -24,41 +24,35 @@ jobs:
 
   lint:
     name: Lint Check
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
 
     steps:
     - name: Check out code
       uses: actions/checkout@v2
 
     - name: Install dependencies
-      run: sudo apt-get install -yqq python3-pip
-    
-    - name: Install tox
-      run: sudo --preserve-env=http_proxy,https_proxy,no_proxy pip3 install tox
-      
+      run: sudo apt-get install python3-pip tox
+
     - name: Lint code
       run: tox -e lint
 
   unit:
     name: Unit Test
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
 
     steps:
     - name: Check out code
       uses: actions/checkout@v2
 
     - name: Install dependencies
-      run: sudo apt-get install -yqq python3-pip
-    
-    - name: Install tox
-      run: sudo --preserve-env=http_proxy,https_proxy,no_proxy pip3 install tox
+      run: sudo apt-get install python3-pip tox
 
     - name: Run unit tests
       run: tox -e unit
 
   integration:
     name: Integration tests (microk8s)
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     steps:
     - name: Maximise GH runner space
       uses: easimon/maximize-build-space@v8
