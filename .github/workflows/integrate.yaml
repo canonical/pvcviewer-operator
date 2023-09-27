@@ -72,6 +72,7 @@ jobs:
         channel: 1.25-strict/stable
         microk8s-addons: "dns hostpath-storage rbac metallb:10.64.140.43-10.64.140.49"
 
+    # Running with kubeflow model because of upstream issue https://github.com/kubeflow/kubeflow/issues/7283
     - name: Run integration tests
       run: sg snap_microk8s -c "tox -vve integration -- --model kubeflow"
 

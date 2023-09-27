@@ -139,3 +139,20 @@ async def test_pvcviewer_example(ops_test: OpsTest, lightkube_client: lightkube.
     # verify that UI is accessible
     assert result_status == 200
     assert len(result_text) > 0
+
+
+@pytest.mark.abort_on_fail
+async def test_remove_deletes_virtual_service(
+    ops_test: OpsTest, lightkube_client: lightkube.Client
+):
+    """Remove pvcviewer charm.
+
+    Assert virtual service is no longer accessible.
+    """
+    await ops_test.model.remove_application(CHARM_NAME, block_until_done=True)
+
+    ingress_url = get_ingress_url(lightkube_client, ops_test.model_name)
+    result_status, _ = await fetch_response(f"{ingress_url}{EXAMPLE_PATH}", {})
+
+    # verify that UI is accessible
+    assert result_status == 404

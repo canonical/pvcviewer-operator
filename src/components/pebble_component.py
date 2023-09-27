@@ -17,7 +17,7 @@ class PvcViewerPebbleService(PebbleServiceComponent):
         logger.info("PebbleServiceComponent.get_layer executing")
         return Layer(
             {
-                "summary": "kfp-viewer layer",
+                "summary": "pvcviewer layer",
                 "description": "Pebble config layer for pvcviewer",
                 "services": {
                     self.service_name: {
@@ -25,7 +25,6 @@ class PvcViewerPebbleService(PebbleServiceComponent):
                         "summary": "Entry point for pvcviewer image",
                         "command": "/manager --leader-elect",
                         "startup": "enabled",
-                        "environment": {},
                     }
                 },
             }
