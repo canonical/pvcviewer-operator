@@ -30,11 +30,6 @@ deepdiff==6.2.1
     # via
     #   -r requirements.txt
     #   charmed-kubeflow-chisme
-exceptiongroup==1.1.3
-    # via
-    #   -r requirements.txt
-    #   anyio
-    #   pytest
 h11==0.14.0
     # via
     #   -r requirements.txt
@@ -53,10 +48,6 @@ idna==3.4
     #   anyio
     #   httpx
     #   requests
-importlib-resources==6.1.0
-    # via
-    #   -r requirements.txt
-    #   jsonschema
 iniconfig==2.0.0
     # via pytest
 jinja2==3.1.2
@@ -91,10 +82,6 @@ ordered-set==4.1.0
     #   deepdiff
 packaging==23.1
     # via pytest
-pkgutil-resolve-name==1.3.10
-    # via
-    #   -r requirements.txt
-    #   jsonschema
 pluggy==1.3.0
     # via pytest
 pyrsistent==0.19.3
@@ -143,9 +130,7 @@ tenacity==8.2.3
     # via
     #   -r requirements.txt
     #   charmed-kubeflow-chisme
-tomli==2.0.1
-    # via pytest
-urllib3==2.0.5
+urllib3==1.26.17
     # via
     #   -r requirements.txt
     #   requests
@@ -153,7 +138,3 @@ websocket-client==1.6.3
     # via
     #   -r requirements.txt
     #   ops
-zipp==3.17.0
-    # via
-    #   -r requirements.txt
-    #   importlib-resources
