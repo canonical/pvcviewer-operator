@@ -9,7 +9,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: metrics-reader
+  name: pvcviewer-metrics-reader
 rules:
 - nonResourceURLs:
   - "/metrics"
@@ -19,11 +19,11 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: proxy-rolebinding
+  name: pvcviewer-proxy-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: proxy-role
+  name: pvcviewer-proxy-role
 subjects:
 - kind: ServiceAccount
   name: {{ app_name }}
@@ -32,7 +32,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: proxy-role
+  name: pvcviewer-proxy-role
 rules:
 - apiGroups:
   - authentication.k8s.io
@@ -50,12 +50,12 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: leader-election-rolebinding
+  name: pvcviewer-leader-election-rolebinding
   namespace: {{ namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: leader-election-role
+  name: pvcviewer-leader-election-role
 subjects:
 - kind: ServiceAccount
   name: {{ app_name }}
@@ -65,7 +65,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: leader-election-role
+  name: pvcviewer-leader-election-role
   namespace: {{ namespace }}
 rules:
 - apiGroups:
@@ -103,11 +103,11 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: manager-rolebinding
+  name: pvcviewer-manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: role
+  name: pvcviewer-role
 subjects:
 - kind: ServiceAccount
   name: {{ app_name }}
@@ -117,7 +117,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   creationTimestamp: null
-  name: role
+  name: pvcviewer-role
 rules:
 - apiGroups:
   - apps
