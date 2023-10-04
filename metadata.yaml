@@ -18,4 +18,4 @@ resources:
   oci-image:
     type: oci-image
     description: Backing OCI image
-    upstream-source: docker.io/kubeflownotebookswg/pvcviewer-controller:latest
+    upstream-source: docker.io/kubeflownotebookswg/pvcviewer-controller:v1.8.0-rc.1
