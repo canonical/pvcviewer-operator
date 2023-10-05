@@ -36,13 +36,14 @@ from ops.framework import StoredState
 from ops.main import main
 
 from certs import gen_certs
-from components.pebble_component import PvcViewerPebbleService
+from components.pebble_component import PvcViewerPebbleService, RbacProxyPebbleService
 
 logger = logging.getLogger(__name__)
 
 CERTS_FOLDER = "/tmp/k8s-webhook-server/serving-certs"
 PORT = 443
-CONTROLLER_PORT = 9443
+WEBHOOK_PORT = 9443
+METRICS_PORT = 8443
 K8S_RESOURCE_FILES = [
     "src/templates/auth_manifests.yaml.j2",
     "src/templates/crd_manifests.yaml.j2",
@@ -60,9 +61,12 @@ class PvcViewer(CharmBase):
         self._namespace = self.model.name
 
         # Expose controller's port
-        http_port = ServicePort(port=PORT, targetPort=CONTROLLER_PORT, name=f"{self.app.name}")
+        webhook_port = ServicePort(port=PORT, targetPort=WEBHOOK_PORT, name=f"{self.app.name}")
+        metrics_port = ServicePort(
+            port=METRICS_PORT, targetPort=METRICS_PORT, name=f"{self.app.name}-metrics"
+        )
         self.service_patcher = KubernetesServicePatch(
-            self, [http_port], service_name=f"{self.model.app.name}"
+            self, [webhook_port, metrics_port], service_name=f"{self.model.app.name}"
         )
 
         self.charm_reconciler = CharmReconciler(self)
@@ -139,6 +143,16 @@ class PvcViewer(CharmBase):
                         destination_path=f"{CERTS_FOLDER}/tls.ca",
                     ),
                 ],
+            ),
+            depends_on=[self.kubernetes_resources],
+        )
+
+        self.pebble_service_container_proxy = self.charm_reconciler.add(
+            component=RbacProxyPebbleService(
+                charm=self,
+                name="kube-rbac-proxy-pebble-service",
+                container_name="kube-rbac-proxy",
+                service_name="kube-rbac-proxy",
             ),
             depends_on=[self.kubernetes_resources],
         )

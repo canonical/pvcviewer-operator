@@ -115,7 +115,8 @@ async def test_build_and_deploy(ops_test: OpsTest):
 
     charm_under_test = await ops_test.build_charm(".")
     image_path = METADATA["resources"]["oci-image"]["upstream-source"]
-    resources = {"oci-image": image_path}
+    image_path_proxy = METADATA["resources"]["oci-image-proxy"]["upstream-source"]
+    resources = {"oci-image": image_path, "oci-image-proxy": image_path_proxy}
     await ops_test.model.deploy(
         charm_under_test, resources=resources, application_name=CHARM_NAME, trust=True
     )
