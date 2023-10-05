@@ -8,7 +8,6 @@ metadata:
     app.kubernetes.io/component: rbac
     app.kubernetes.io/created-by: {{ app_name }}
     app.kubernetes.io/instance: controller-manager-sa
-    app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: serviceaccount
     app.kubernetes.io/part-of: {{ app_name }}
   name: {{ app_name }}
@@ -22,7 +21,6 @@ metadata:
     app.kubernetes.io/component: kube-rbac-proxy
     app.kubernetes.io/created-by: {{ app_name }}
     app.kubernetes.io/instance: metrics-reader
-    app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: clusterrole
     app.kubernetes.io/part-of: {{ app_name }}
   name: pvcviewer-metrics-reader
@@ -40,7 +38,6 @@ metadata:
     app.kubernetes.io/component: kube-rbac-proxy
     app.kubernetes.io/created-by: {{ app_name }}
     app.kubernetes.io/instance: proxy-rolebinding
-    app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: clusterrolebinding
     app.kubernetes.io/part-of: {{ app_name }}
   name: pvcviewer-proxy-rolebinding
@@ -61,7 +58,6 @@ metadata:
     app.kubernetes.io/component: kube-rbac-proxy
     app.kubernetes.io/created-by: {{ app_name }}
     app.kubernetes.io/instance: proxy-role
-    app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: clusterrole
     app.kubernetes.io/part-of: {{ app_name }}
   name: pvcviewer-proxy-role
@@ -87,7 +83,6 @@ metadata:
     app.kubernetes.io/component: rbac
     app.kubernetes.io/created-by: {{ app_name }}
     app.kubernetes.io/instance: leader-election-rolebinding
-    app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: rolebinding
     app.kubernetes.io/part-of: {{ app_name }}
   name: pvcviewer-leader-election-rolebinding
@@ -110,7 +105,6 @@ metadata:
     app.kubernetes.io/component: rbac
     app.kubernetes.io/created-by: {{ app_name }}
     app.kubernetes.io/instance: leader-election-role
-    app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: role
     app.kubernetes.io/part-of: {{ app_name }}
   name: pvcviewer-leader-election-role
@@ -156,7 +150,6 @@ metadata:
     app.kubernetes.io/component: rbac
     app.kubernetes.io/created-by: {{ app_name }}
     app.kubernetes.io/instance: manager-rolebinding
-    app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: clusterrolebinding
     app.kubernetes.io/part-of: {{ app_name }}
   name: pvcviewer-manager-rolebinding
