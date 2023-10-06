@@ -3,22 +3,43 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  labels:
+    app: {{ app_name }}
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: {{ app_name }}
+    app.kubernetes.io/instance: controller-manager-sa
+    app.kubernetes.io/name: serviceaccount
+    app.kubernetes.io/part-of: {{ app_name }}
   name: {{ app_name }}
   namespace: {{ namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  labels:
+    app: {{ app_name }}
+    app.kubernetes.io/component: kube-rbac-proxy
+    app.kubernetes.io/created-by: {{ app_name }}
+    app.kubernetes.io/instance: metrics-reader
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/part-of: {{ app_name }}
   name: pvcviewer-metrics-reader
 rules:
 - nonResourceURLs:
-  - "/metrics"
+  - /metrics
   verbs:
   - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
+  labels:
+    app: {{ app_name }}
+    app.kubernetes.io/component: kube-rbac-proxy
+    app.kubernetes.io/created-by: {{ app_name }}
+    app.kubernetes.io/instance: proxy-rolebinding
+    app.kubernetes.io/name: clusterrolebinding
+    app.kubernetes.io/part-of: {{ app_name }}
   name: pvcviewer-proxy-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -32,6 +53,13 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  labels:
+    app: {{ app_name }}
+    app.kubernetes.io/component: kube-rbac-proxy
+    app.kubernetes.io/created-by: {{ app_name }}
+    app.kubernetes.io/instance: proxy-role
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/part-of: {{ app_name }}
   name: pvcviewer-proxy-role
 rules:
 - apiGroups:
@@ -50,6 +78,13 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
+  labels:
+    app: {{ app_name }}
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: {{ app_name }}
+    app.kubernetes.io/instance: leader-election-rolebinding
+    app.kubernetes.io/name: rolebinding
+    app.kubernetes.io/part-of: {{ app_name }}
   name: pvcviewer-leader-election-rolebinding
   namespace: {{ namespace }}
 roleRef:
@@ -65,6 +100,13 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
+  labels:
+    app: {{ app_name }}
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: {{ app_name }}
+    app.kubernetes.io/instance: leader-election-role
+    app.kubernetes.io/name: role
+    app.kubernetes.io/part-of: {{ app_name }}
   name: pvcviewer-leader-election-role
   namespace: {{ namespace }}
 rules:
@@ -103,6 +145,13 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
+  labels:
+    app: {{ app_name }}
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: {{ app_name }}
+    app.kubernetes.io/instance: manager-rolebinding
+    app.kubernetes.io/name: clusterrolebinding
+    app.kubernetes.io/part-of: {{ app_name }}
   name: pvcviewer-manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -116,7 +165,8 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  creationTimestamp: null
+  labels:
+    app: {{ app_name }}
   name: pvcviewer-role
 rules:
 - apiGroups:
