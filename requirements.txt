@@ -13,7 +13,8 @@ certifi==2023.7.22
     #   httpcore
     #   httpx
     #   requests
-charmed-kubeflow-chisme==0.2.0
+# DEBUG: Pinned to a branch for regression testing
+git+https://github.com/canonical/charmed-kubeflow-chisme.git@KF-5257-add-LazyContainerFileTemplate
     # via -r requirements.in
 charset-normalizer==3.2.0
     # via requests
