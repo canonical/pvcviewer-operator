@@ -11,3 +11,5 @@ bases:
 parts:
   charm:
     charm-python-packages: [setuptools, pip]  # Fixes install of some packages
+    # TODO: Remove git after unpinning chisme dependency
+    build-packages: [git]
