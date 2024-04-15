@@ -23,8 +23,8 @@ CHARM_NAME = METADATA["name"]
 
 ISTIO_GATEWAY_CHARM_NAME = "istio-gateway"
 ISTIO_PILOT_CHARM_NAME = "istio-pilot"
-ISTIO_PILOT_VERSION = "1.16/stable"
-ISTIO_GATEWAY_VERSION = "1.16/stable"
+ISTIO_PILOT_VERSION = "latest/edge"
+ISTIO_GATEWAY_VERSION = "latest/edge"
 ISTIO_GATEWAY_NAME = "kubeflow-gateway"
 EXAMPLE_FILE = "./tests/integration/pvcviewer_example/pvcviewer_example.yaml"
 EXAMPLE_PATH = "/pvcviewer/kubeflow-user-example-com/pvcviewer-sample/files/"
