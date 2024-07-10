@@ -25,3 +25,7 @@ resources:
     type: oci-image
     description: OCI image for kube rbac proxy
     upstream-source: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1
+requires:
+  logging:
+    interface: loki_push_api
+    optional: true
