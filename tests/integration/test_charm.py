@@ -10,6 +10,7 @@ import aiohttp
 import lightkube
 import pytest
 import yaml
+from charmed_kubeflow_chisme.testing import assert_logging, deploy_and_assert_grafana_agent
 from lightkube import codecs
 from lightkube.generic_resource import create_namespaced_resource
 from lightkube.resources.core_v1 import Service
@@ -105,7 +106,7 @@ async def test_build_and_deploy(ops_test: OpsTest):
         config={"kind": "ingress"},
         trust=True,
     )
-    await ops_test.model.add_relation(ISTIO_PILOT_CHARM_NAME, ISTIO_GATEWAY_CHARM_NAME)
+    await ops_test.model.integrate(ISTIO_PILOT_CHARM_NAME, ISTIO_GATEWAY_CHARM_NAME)
     await ops_test.model.wait_for_idle(
         [ISTIO_PILOT_CHARM_NAME, ISTIO_GATEWAY_CHARM_NAME],
         raise_on_blocked=False,
@@ -124,6 +125,17 @@ async def test_build_and_deploy(ops_test: OpsTest):
         apps=[CHARM_NAME], status="active", raise_on_blocked=True, timeout=300
     )
     assert ops_test.model.applications[CHARM_NAME].units[0].workload_status == "active"
+
+    # Deploying grafana-agent-k8s and add all relations
+    await deploy_and_assert_grafana_agent(
+        ops_test.model, CHARM_NAME, metrics=False, dashboard=False, logging=True
+    )
+
+
+async def test_logging(ops_test: OpsTest):
+    """Test logging is defined in relation data bag."""
+    app = ops_test.model.applications[CHARM_NAME]
+    await assert_logging(app)
 
 
 @retry(stop=stop_after_delay(600), wait=wait_fixed(10))

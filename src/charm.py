@@ -17,6 +17,7 @@ from charmed_kubeflow_chisme.components.charm_reconciler import CharmReconciler
 from charmed_kubeflow_chisme.components.kubernetes_component import KubernetesComponent
 from charmed_kubeflow_chisme.components.leadership_gate_component import LeadershipGateComponent
 from charmed_kubeflow_chisme.kubernetes import create_charm_default_labels
+from charms.loki_k8s.v1.loki_push_api import LogForwarder
 from charms.observability_libs.v1.kubernetes_service_patch import KubernetesServicePatch
 from lightkube.models.core_v1 import ServicePort
 from lightkube.resources.admissionregistration_v1 import (
@@ -158,6 +159,7 @@ class PvcViewer(CharmBase):
         )
 
         self.charm_reconciler.install_default_event_handlers()
+        self._logging = LogForwarder(charm=self)
 
     def _gen_certs_if_missing(self) -> None:
         """Generate certificates if they don't already exist in _stored."""

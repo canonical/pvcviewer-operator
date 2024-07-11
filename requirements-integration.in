@@ -4,3 +4,6 @@ juju<4.0
 lightkube
 pytest-operator
 tenacity
+# Pin to >=0.4.0 because the reusable test infrastructure is on that version and above
+# This prevents pip-compile from trying to pin an earlier version
+charmed-kubeflow-chisme>=0.4.0
