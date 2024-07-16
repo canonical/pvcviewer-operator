@@ -17,8 +17,10 @@ from charmed_kubeflow_chisme.components.charm_reconciler import CharmReconciler
 from charmed_kubeflow_chisme.components.kubernetes_component import KubernetesComponent
 from charmed_kubeflow_chisme.components.leadership_gate_component import LeadershipGateComponent
 from charmed_kubeflow_chisme.kubernetes import create_charm_default_labels
+from charms.grafana_k8s.v0.grafana_dashboard import GrafanaDashboardProvider
 from charms.loki_k8s.v1.loki_push_api import LogForwarder
 from charms.observability_libs.v1.kubernetes_service_patch import KubernetesServicePatch
+from charms.prometheus_k8s.v0.prometheus_scrape import MetricsEndpointProvider
 from lightkube.models.core_v1 import ServicePort
 from lightkube.resources.admissionregistration_v1 import (
     MutatingWebhookConfiguration,
@@ -44,7 +46,8 @@ logger = logging.getLogger(__name__)
 CERTS_FOLDER = "/tmp/k8s-webhook-server/serving-certs"
 PORT = 443
 WEBHOOK_PORT = 9443
-METRICS_PORT = 8443
+METRICS_PORT = 8080
+METRICS_PATH = "/metrics"
 K8S_RESOURCE_FILES = [
     "src/templates/auth_manifests.yaml.j2",
     "src/templates/crd_manifests.yaml.j2",
@@ -60,7 +63,6 @@ class PvcViewer(CharmBase):
         super().__init__(*args)
 
         self._namespace = self.model.name
-
         # Expose controller's port
         webhook_port = ServicePort(port=PORT, targetPort=WEBHOOK_PORT, name=f"{self.app.name}")
         metrics_port = ServicePort(
@@ -69,7 +71,18 @@ class PvcViewer(CharmBase):
         self.service_patcher = KubernetesServicePatch(
             self, [webhook_port, metrics_port], service_name=f"{self.model.app.name}"
         )
-
+        self.prometheus_provider = MetricsEndpointProvider(
+            charm=self,
+            relation_name="metrics-endpoint",
+            jobs=[
+                {
+                    "metrics_path": METRICS_PATH,
+                    # "scheme": "https",
+                    "static_configs": [{"targets": ["*:{}".format(METRICS_PORT)]}],
+                }
+            ],
+        )
+        self.dashboard_provider = GrafanaDashboardProvider(self)
         self.charm_reconciler = CharmReconciler(self)
 
         # Generate self-signed certificates and store them
