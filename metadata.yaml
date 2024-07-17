@@ -14,17 +14,11 @@ docs: https://discourse.charmhub.io/t/8212
 containers:
   pvcviewer-operator:
     resource: oci-image
-  kube-rbac-proxy:
-    resource: oci-image-proxy
 resources:
   oci-image:
     type: oci-image
     description: Backing OCI image
     upstream-source: docker.io/kubeflownotebookswg/pvcviewer-controller:v1.9.0-rc.0
-  oci-image-proxy:
-    type: oci-image
-    description: OCI image for kube rbac proxy
-    upstream-source: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1
 requires:
   logging:
     interface: loki_push_api
