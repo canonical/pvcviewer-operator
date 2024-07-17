@@ -43,8 +43,7 @@ def test_metrics(harness, mocked_lightkube_client, mocked_kubernetes_service_pat
             jobs=[
                 {
                     "metrics_path": "/metrics",
-                    "scheme": "https",
-                    "static_configs": [{"targets": ["*:8443"]}],
+                    "static_configs": [{"targets": ["*:8080"]}],
                 }
             ],
         )
