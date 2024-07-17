@@ -144,7 +144,7 @@ async def test_metrics_enpoint(ops_test):
     ones provided to the function.
     """
     app = ops_test.model.applications[CHARM_NAME]
-    await assert_metrics_endpoint(app, metrics_port=8080, metrics_path="/metrics")
+    await assert_metrics_endpoint(app, metrics_port=8443, metrics_path="/metrics")
 
 
 async def test_logging(ops_test: OpsTest):

@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 CERTS_FOLDER = "/tmp/k8s-webhook-server/serving-certs"
 PORT = 443
 WEBHOOK_PORT = 9443
-METRICS_PORT = 8080
+METRICS_PORT = 8443
 METRICS_PATH = "/metrics"
 K8S_RESOURCE_FILES = [
     "src/templates/auth_manifests.yaml.j2",
@@ -77,8 +77,8 @@ class PvcViewer(CharmBase):
             jobs=[
                 {
                     "metrics_path": METRICS_PATH,
-                    # "scheme": "https",
-                    "static_configs": [{"targets": ["*:{}".format(METRICS_PORT)]}],
+                    "scheme": "https",
+                    "static_configs": [{"targets": [f"*:{METRICS_PORT}"]}],
                 }
             ],
         )
