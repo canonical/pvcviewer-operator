@@ -47,7 +47,6 @@ CERTS_FOLDER = "/tmp/k8s-webhook-server/serving-certs"
 PORT = 443
 WEBHOOK_PORT = 9443
 METRICS_PORT = 8080
-METRICS_PATH = "/metrics"
 K8S_RESOURCE_FILES = [
     "src/templates/auth_manifests.yaml.j2",
     "src/templates/crd_manifests.yaml.j2",
@@ -74,12 +73,7 @@ class PvcViewer(CharmBase):
         self.prometheus_provider = MetricsEndpointProvider(
             charm=self,
             relation_name="metrics-endpoint",
-            jobs=[
-                {
-                    "metrics_path": METRICS_PATH,
-                    "static_configs": [{"targets": [f"*:{METRICS_PORT}"]}],
-                }
-            ],
+            jobs=[{"static_configs": [{"targets": [f"*:{METRICS_PORT}"]}]}],
         )
         self.dashboard_provider = GrafanaDashboardProvider(self)
         self.charm_reconciler = CharmReconciler(self)

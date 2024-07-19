@@ -9,6 +9,16 @@ metadata:
     app: {{ app_name }}
   name: pvcviewers.kubeflow.org
 spec:
+  conversion:
+    strategy: Webhook
+    webhook:
+      clientConfig:
+        service:
+          name: {{ webhook_service_name }}
+          namespace: {{ namespace }}
+          path: /convert
+      conversionReviewVersions:
+      - v1
   group: kubeflow.org
   names:
     kind: PVCViewer

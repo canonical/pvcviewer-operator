@@ -116,7 +116,8 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  creationTimestamp: null
+  labels:
+    app: {{ app_name }}
   name: pvcviewer-role
 rules:
 - apiGroups:
