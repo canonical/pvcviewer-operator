@@ -39,7 +39,6 @@ def test_metrics(harness, mocked_lightkube_client, mocked_kubernetes_service_pat
         harness.begin()
         mock_metrics.assert_called_once_with(
             charm=harness.charm,
-            relation_name="metrics-endpoint",
             jobs=[{"static_configs": [{"targets": ["*:8080"]}]}],
         )
 

@@ -72,7 +72,6 @@ class PvcViewer(CharmBase):
         )
         self.prometheus_provider = MetricsEndpointProvider(
             charm=self,
-            relation_name="metrics-endpoint",
             jobs=[{"static_configs": [{"targets": [f"*:{METRICS_PORT}"]}]}],
         )
         self.dashboard_provider = GrafanaDashboardProvider(self)
