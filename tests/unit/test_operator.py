@@ -33,6 +33,23 @@ def mocked_kubernetes_service_patch(mocker):
     yield mocked_kubernetes_service_patch
 
 
+def test_metrics(harness, mocked_lightkube_client, mocked_kubernetes_service_patch):
+    """Test MetricsEndpointProvider initialization."""
+    with patch("charm.MetricsEndpointProvider") as mock_metrics:
+        harness.begin()
+        mock_metrics.assert_called_once_with(
+            charm=harness.charm,
+            jobs=[{"static_configs": [{"targets": ["*:8080"]}]}],
+        )
+
+
+def test_grafana_dashboard(harness, mocked_lightkube_client, mocked_kubernetes_service_patch):
+    """Test GrafanaDashboardProvider initialization."""
+    with patch("charm.GrafanaDashboardProvider") as mock_grafana:
+        harness.begin()
+        mock_grafana.assert_called_once_with(harness.charm)
+
+
 def test_log_forwarding(harness, mocked_lightkube_client, mocked_kubernetes_service_patch):
     """Test LogForwarder initialization."""
     with patch("charm.LogForwarder") as mock_logging:
@@ -81,7 +98,6 @@ def test_pebble_services_running(
     # Arrange
     harness.begin()
     harness.set_can_connect("pvcviewer-operator", True)
-    harness.set_can_connect("kube-rbac-proxy", True)
 
     # Mock:
     # * leadership_gate to have get_status=>Active
@@ -95,11 +111,8 @@ def test_pebble_services_running(
 
     # Assert
     container = harness.charm.unit.get_container("pvcviewer-operator")
-    container_rbac_proxy = harness.charm.unit.get_container("kube-rbac-proxy")
     service = container.get_service("pvcviewer-operator")
-    service_rbac_proxy = container_rbac_proxy.get_service("kube-rbac-proxy")
     assert service.is_running()
-    assert service_rbac_proxy.is_running()
 
 
 def test_get_certs(harness, mocked_lightkube_client, mocked_kubernetes_service_patch):
