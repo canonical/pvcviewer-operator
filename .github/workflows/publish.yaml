@@ -12,3 +12,4 @@ jobs:
     name: Publish
     uses: canonical/charmed-kubeflow-workflows/.github/workflows/_publish.yaml@main
     secrets: inherit
+          charmcraft-channel: latest/candidate
