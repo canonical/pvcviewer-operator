@@ -1,7 +1,7 @@
 variable "app_name" {
   description = "Application name"
   type        = string
-  default     = "pvcviewer_operator"
+  default     = "pvcviewer-operator"
 }
 
 variable "channel" {
