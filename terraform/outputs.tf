@@ -11,7 +11,6 @@ output "provides" {
 
 output "requires" {
   value = {
-    object_storage = "object-storage",
     logging        = "logging"
   }
 }
