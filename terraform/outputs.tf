@@ -11,6 +11,6 @@ output "provides" {
 
 output "requires" {
   value = {
-    logging        = "logging"
+    logging = "logging"
   }
 }
