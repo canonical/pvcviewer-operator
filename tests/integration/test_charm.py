@@ -11,9 +11,11 @@ import lightkube
 import pytest
 import yaml
 from charmed_kubeflow_chisme.testing import (
+    assert_alert_rules,
     assert_logging,
     assert_metrics_endpoint,
     deploy_and_assert_grafana_agent,
+    get_alert_rules,
 )
 from lightkube import codecs
 from lightkube.generic_resource import create_namespaced_resource
@@ -150,6 +152,14 @@ async def test_logging(ops_test: OpsTest):
     """Test logging is defined in relation data bag."""
     app = ops_test.model.applications[CHARM_NAME]
     await assert_logging(app)
+
+
+async def test_alert_rules(ops_test: OpsTest):
+    """Test check charm alert rules and rules defined in relation data bag."""
+    app = ops_test.model.applications[CHARM_NAME]
+    alert_rules = get_alert_rules()
+    logger.info("found alert_rules: %s", alert_rules)
+    await assert_alert_rules(app, alert_rules)
 
 
 @retry(stop=stop_after_delay(600), wait=wait_fixed(10))
