@@ -77,6 +77,7 @@ jobs:
         provider: microk8s
         channel: 1.29-strict/stable
         microk8s-addons: "dns hostpath-storage rbac metallb:10.64.140.43-10.64.140.49"
+        charmcraft-channel: 3.x/stable
 
     # Running with kubeflow model because of upstream issue https://github.com/kubeflow/kubeflow/issues/7283
     - name: Run integration tests
