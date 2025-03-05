@@ -18,7 +18,7 @@ resources:
   oci-image:
     type: oci-image
     description: Backing OCI image
-    upstream-source: docker.io/kubeflownotebookswg/pvcviewer-controller:v1.10.0-rc.1
+    upstream-source: charmedkubeflow/pvcviewer-controller:1.10.0-rc.1-3a8beff
 requires:
   logging:
     interface: loki_push_api
