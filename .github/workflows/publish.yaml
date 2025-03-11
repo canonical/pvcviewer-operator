@@ -10,5 +10,5 @@ on:
 jobs:
   publish:
     name: Publish
-    uses: canonical/charmed-kubeflow-workflows/.github/workflows/_publish.yaml@main
+    uses: canonical/charmed-kubeflow-workflows/.github/workflows/_publish.yaml@kf-7092-update-runners
     secrets: inherit
