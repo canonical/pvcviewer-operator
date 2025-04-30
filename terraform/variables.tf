@@ -7,7 +7,7 @@ variable "app_name" {
 variable "channel" {
   description = "Charm channel"
   type        = string
-  default     = null
+  default     = "latest/edge"
 }
 
 variable "config" {
@@ -21,7 +21,6 @@ variable "model_name" {
   type        = string
 }
 
-# TODO: Update to a map of strings, once juju provider 0.14 is released
 variable "resources" {
   description = "Map of resources"
   type        = map(string)
