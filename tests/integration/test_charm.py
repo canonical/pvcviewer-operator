@@ -17,6 +17,7 @@ from charmed_kubeflow_chisme.testing import (
     deploy_and_assert_grafana_agent,
     get_alert_rules,
 )
+from charms_dependencies import ISTIO_GATEWAY, ISTIO_PILOT
 from lightkube import codecs
 from lightkube.generic_resource import create_namespaced_resource
 from lightkube.resources.core_v1 import Service
@@ -28,11 +29,6 @@ logger = logging.getLogger(__name__)
 METADATA = yaml.safe_load(Path("./metadata.yaml").read_text())
 CHARM_NAME = METADATA["name"]
 
-ISTIO_GATEWAY_CHARM_NAME = "istio-gateway"
-ISTIO_PILOT_CHARM_NAME = "istio-pilot"
-ISTIO_PILOT_VERSION = "latest/edge"
-ISTIO_GATEWAY_VERSION = "latest/edge"
-ISTIO_GATEWAY_NAME = "kubeflow-gateway"
 EXAMPLE_FILE = "./tests/integration/pvcviewer_example/pvcviewer_example.yaml"
 EXAMPLE_PATH = "/pvcviewer/kubeflow-user-example-com/pvcviewer-sample/files/"
 
@@ -100,21 +96,21 @@ async def test_build_and_deploy(ops_test: OpsTest):
 
     # Deploy istio-operators for ingress configuration
     await ops_test.model.deploy(
-        ISTIO_PILOT_CHARM_NAME,
-        channel=ISTIO_PILOT_VERSION,
-        config={"default-gateway": ISTIO_GATEWAY_NAME},
-        trust=True,
+        ISTIO_PILOT.charm,
+        channel=ISTIO_PILOT.channel,
+        config=ISTIO_PILOT.config,
+        trust=ISTIO_PILOT.trust,
     )
 
     await ops_test.model.deploy(
-        ISTIO_GATEWAY_CHARM_NAME,
-        channel=ISTIO_GATEWAY_VERSION,
-        config={"kind": "ingress"},
-        trust=True,
+        ISTIO_GATEWAY.charm,
+        channel=ISTIO_GATEWAY.channel,
+        config=ISTIO_GATEWAY.config,
+        trust=ISTIO_GATEWAY.trust,
     )
-    await ops_test.model.integrate(ISTIO_PILOT_CHARM_NAME, ISTIO_GATEWAY_CHARM_NAME)
+    await ops_test.model.integrate(ISTIO_PILOT.charm, ISTIO_GATEWAY.charm)
     await ops_test.model.wait_for_idle(
-        [ISTIO_PILOT_CHARM_NAME, ISTIO_GATEWAY_CHARM_NAME],
+        [ISTIO_PILOT.charm, ISTIO_GATEWAY.charm],
         raise_on_blocked=False,
         status="active",
         timeout=900,
