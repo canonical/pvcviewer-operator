@@ -95,7 +95,7 @@ jobs:
 
     # Running with kubeflow model because of upstream issue https://github.com/kubeflow/kubeflow/issues/7283
     - name: Run integration tests
-      run: tox -vve integration -- --model kubeflow
+      run: tox -vve integration --model kubeflow
 
     # On failure, capture debugging resources      
     - name: Get all
