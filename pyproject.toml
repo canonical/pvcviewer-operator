@@ -118,7 +118,8 @@ commands = [
 	["isort", "{[vars]src_path}", "{[vars]tst_path}"],
 	["black", "{[vars]src_path}", "{[vars]tst_path}"],
 ]
-dependency_groups = ["fmt"]
+runner = "uv-venv-lock-runner"
+extras = ["fmt"]
 description = "Apply coding style standards to code"
 
 [tool.tox.env.lint]
@@ -150,7 +151,8 @@ commands = [
 	["isort", "--check-only", "--diff", "{[vars]src_path}", "{[vars]tst_path}"],
 	["black", "--check", "--diff", "{[vars]src_path}", "{[vars]tst_path}"],
 ]
-dependency_groups = ["lint"]
+runner = "uv-venv-lock-runner"
+extras = ["lint"]
 description = "Check code against coding style standards"
 
 [tool.tox.env.tflint]
@@ -179,7 +181,8 @@ commands = [
 	["coverage", "report"],
 	["coverage", "xml"],
 ]
-dependency_groups = ["charm", "unit"]
+runner = "uv-venv-lock-runner"
+extras = ["charm", "unit"]
 description = "Run unit tests"
 
 [tool.tox.env.integration]
@@ -196,5 +199,6 @@ commands = [
         { replace = "posargs", extend = true },
     ],
 ]
-dependency_groups = ["integration"]
+runner = "uv-venv-lock-runner"
+extras = ["integration"]
 description = "Run integration tests"
