@@ -1121,7 +1121,7 @@ version = "1.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "typing-extensions", version = "4.13.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
-    { name = "typing-extensions", version = "4.14.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9' and python_full_version < '3.13'" },
+    { name = "typing-extensions", version = "4.14.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9' and python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/0b/9f/a65090624ecf468cdca03533906e7c69ed7588582240cfe7cc9e770b50eb/exceptiongroup-1.3.0.tar.gz", hash = "sha256:b241f5885f560bc56a59ee63ca4c6a8bfa46ae4ad651af316d4e81817bb9fd88", size = 29749, upload-time = "2025-05-10T17:42:51.123Z" }
 wheels = [
@@ -2790,7 +2790,7 @@ name = "pvcviewer-operator"
 version = "0.1.0"
 source = { virtual = "." }
 
-[package.dev-dependencies]
+[package.optional-dependencies]
 charm = [
     { name = "charmed-kubeflow-chisme" },
     { name = "cosl" },
@@ -2841,44 +2841,35 @@ unit = [
 ]
 
 [package.metadata]
-
-[package.metadata.requires-dev]
-charm = [
-    { name = "charmed-kubeflow-chisme", specifier = ">=0.2.0" },
-    { name = "cosl" },
-    { name = "ops" },
-    { name = "serialized-data-interface" },
+requires-dist = [
+    { name = "aiohttp", marker = "extra == 'integration'" },
+    { name = "black", marker = "extra == 'fmt'" },
+    { name = "black", marker = "extra == 'lint'" },
+    { name = "charmed-kubeflow-chisme", marker = "extra == 'charm'", specifier = ">=0.2.0" },
+    { name = "charmed-kubeflow-chisme", marker = "extra == 'integration'", specifier = ">=0.4.0" },
+    { name = "codespell", marker = "extra == 'lint'" },
+    { name = "cosl", marker = "extra == 'charm'" },
+    { name = "coverage", marker = "extra == 'unit'" },
+    { name = "flake8", marker = "extra == 'lint'" },
+    { name = "flake8-builtins", marker = "extra == 'lint'" },
+    { name = "flake8-copyright", marker = "extra == 'lint'" },
+    { name = "isort", marker = "extra == 'fmt'" },
+    { name = "isort", marker = "extra == 'lint'" },
+    { name = "juju", marker = "extra == 'integration'", specifier = "<4.0" },
+    { name = "lightkube", marker = "extra == 'integration'" },
+    { name = "ops", marker = "extra == 'charm'" },
+    { name = "ops", marker = "extra == 'unit'" },
+    { name = "pep8-naming", marker = "extra == 'lint'" },
+    { name = "pyproject-flake8", marker = "extra == 'lint'" },
+    { name = "pytest", marker = "extra == 'unit'" },
+    { name = "pytest-lazy-fixture", marker = "extra == 'unit'" },
+    { name = "pytest-mock", marker = "extra == 'unit'" },
+    { name = "pytest-operator", marker = "extra == 'integration'" },
+    { name = "pyyaml", marker = "extra == 'unit'" },
+    { name = "serialized-data-interface", marker = "extra == 'charm'" },
+    { name = "tenacity", marker = "extra == 'integration'" },
 ]
-fmt = [
-    { name = "black" },
-    { name = "isort" },
-]
-integration = [
-    { name = "aiohttp" },
-    { name = "charmed-kubeflow-chisme", specifier = ">=0.4.0" },
-    { name = "juju", specifier = "<4.0" },
-    { name = "lightkube" },
-    { name = "pytest-operator" },
-    { name = "tenacity" },
-]
-lint = [
-    { name = "black" },
-    { name = "codespell" },
-    { name = "flake8" },
-    { name = "flake8-builtins" },
-    { name = "flake8-copyright" },
-    { name = "isort" },
-    { name = "pep8-naming" },
-    { name = "pyproject-flake8" },
-]
-unit = [
-    { name = "coverage" },
-    { name = "ops" },
-    { name = "pytest" },
-    { name = "pytest-lazy-fixture" },
-    { name = "pytest-mock" },
-    { name = "pyyaml" },
-]
+provides-extras = ["charm", "fmt", "lint", "unit", "integration"]
 
 [[package]]
 name = "pyasn1"
