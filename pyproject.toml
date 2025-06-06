@@ -193,7 +193,7 @@ commands = [
         "{[vars]tst_path}integration",
         "--log-cli-level=INFO",
         "-s",
-        "{posargs}",
+        { replace = "posargs", extend = true },
     ],
 ]
 dependency_groups = ["integration"]
