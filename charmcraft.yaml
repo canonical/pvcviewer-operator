@@ -10,5 +10,8 @@ bases:
       channel: "20.04"
 parts:
   charm:
-    charm-python-packages: [setuptools, pip]  # Fixes install of some packages
+    plugin: uv
+    uv-groups: [charm]
+    source: .
     build-packages: [cargo, rustc, pkg-config, libffi-dev, libssl-dev]
+    build-snaps: [astral-uv]

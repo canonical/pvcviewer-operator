@@ -1,5 +1,61 @@
-# Copyright 2023 Canonical Ltd.
+# Copyright 2025 Canonical Ltd.
 # See LICENSE file for licensing details.
+
+[project]
+name = "pvcviewer-operator"
+version = "0.1.0"
+description = "Charmed PVC Viewer: a Juju Operator for PCV Viewer"
+readme = "README.md"
+requires-python = ">=3.8"
+# ----------------------------------------------------------------------------
+# please, leave this list of project dependencies empty...
+dependencies = []
+# ... as dependency groups can instead be specified for the charm project via
+# the uv plugin of Charmcraft - use the "charm" dependency group defined below
+# ----------------------------------------------------------------------------
+
+[dependency-groups]
+charm = [
+    # Version >=0.2.0 contains the base charm code that's needed.
+    "charmed-kubeflow-chisme >= 0.2.0",
+    "ops",
+    "serialized-data-interface",
+    # from loki_k8s.v1.loki_push_api.py
+    "cosl",
+]
+fmt = [
+	"black",
+    "isort",
+]
+lint = [
+	"black",
+    "codespell",
+    "flake8",
+    "flake8-builtins",
+    "flake8-copyright",
+    "isort",
+    "pep8-naming",
+    "pyproject-flake8",
+]
+unit = [
+    "coverage",
+    "ops",
+    "pytest",
+    "pytest-mock",
+    "pytest-lazy-fixture",
+    "pyyaml",
+]
+integration = [
+	"aiohttp",
+    # Pinning to <4.0 due to compatibility with the 3.1 controller version
+    "juju<4.0",
+    "lightkube",
+    "pytest-operator",
+    "tenacity",
+    # Pin to >=0.4.0 because the reusable test infrastructure is on that version and above
+    # This prevents pip-compile from trying to pin an earlier version
+    "charmed-kubeflow-chisme>=0.4.0",
+]
 
 # Testing tools configuration
 [tool.coverage.run]
@@ -38,3 +94,124 @@ docstring-convention = "google"
 copyright-check = "True"
 copyright-author = "Canonical Ltd."
 copyright-regexp = "Copyright\\s\\d{4}([-,]\\d{4})*\\s+%(author)s"
+
+[tool.tox]
+skipsdist = true
+skip_missing_interpreters = true
+envlist = ["fmt", "lint", "unit", "integration"]
+
+[vars]
+all_path = "{[vars]src_path} {[vars]tst_path}"
+src_path = "{toxinidir}/src/"
+tst_path = "{toxinidir}/tests/"
+
+[tool.tox.env_run_base]
+passenv = [
+	"PYTHONPATH",
+	"CHARM_BUILD_DIR",
+	"MODEL_SETTINGS",
+	"KUBECONFIG",
+]
+setenv = { PYTHONPATH = "{toxinidir}:{toxinidir}/lib:{[vars]src_path}",	PYTHONBREAKPOINT = "ipdb.set_trace", PY_COLORS = 1 }
+
+[tool.tox.env.update-requirements]
+allowlist_externals = [
+	"bash",
+	"find",
+	"pip-compile",
+	"xargs",
+]
+commands = [
+	# we must preserve the order of compilation, since each *.in file depends on some *.txt file.
+	# For example, requirements-unit.in depends on requirements.txt and we must compile first
+	# requirements.txt to ensure that requirements-unit.txt get the same dependency as the requirements.txt
+	[
+        "bash",
+        "-c",
+        'for pattern in "requirements.in" "requirements-fmt.in" "requirements*.in"; do find . -type f -name "$pattern" -exec bash -c "cd \$(dirname "{}") && pip-compile --resolver=backtracking \$(basename "{}")" \;; done',
+    ]
+]
+deps = [
+	"pip-tools",
+	# Pin due to https://github.com/jazzband/pip-tools/issues/2131
+	"pip==24.2",
+]
+description = "Update requirements files by executing pip-compile on all requirements*.in files, including those in subdirs."
+
+[tool.tox.env.fmt]
+commands = [
+	["isort", "{[vars]all_path}"],
+	["black", "{[vars]all_path}"],
+]
+dependency_groups = ["fmt"]
+description = "Apply coding style standards to code"
+
+[tool.tox.env.lint]
+commands = [
+	# uncomment the following line if this charm owns a lib
+	# codespell {[vars]lib_path}
+    [
+        "codespell",
+        "{toxinidir}/.",
+        "--skip",
+        "{toxinidir}/.git",
+        "--skip",
+        "{toxinidir}/.tox",
+        "--skip",
+        "{toxinidir}/build",
+        "--skip",
+        "{toxinidir}/lib",
+        "--skip",
+        "{toxinidir}/venv",
+        "--skip",
+        "{toxinidir}/.mypy_cache",
+        "--skip",
+        "{toxinidir}/icon.svg",
+        "--skip",
+        "*.json.tmpl",
+    ],
+	# pflake8 wrapper supports config from pyproject.toml
+	["pflake8", "{[vars]all_path}"],
+	["isort", "--check-only", "--diff", "{[vars]all_path}"],
+	["black", "--check", "--diff", "{[vars]all_path}"],
+]
+dependency_groups = ["lint"]
+description = "Check code against coding style standards"
+
+[tool.tox.env.tflint]
+allowlist_externals = [
+	"tflint"
+]
+commands = [
+	["tflint", "--chdir=terraform", "--recursive"]
+]
+description = "Check Terraform code against coding style standards"
+
+[tool.tox.env.unit]
+commands = [
+	[
+        "coverage",
+        "run",
+        "--source={[vars]src_path}",
+	    "-m",
+        "pytest",
+        "--ignore={[vars]tst_path}integration -vv --tb native {posargs}",
+    ],
+	["coverage", "report"],
+	["coverage", "xml"],
+]
+dependency_groups = ["charm", "unit"]
+description = "Run unit tests"
+
+[tool.tox.env.integration]
+commands = [
+    [
+        "pytest",
+        "-vv",
+        "--tb",
+        "native",
+        "--asyncio-mode=auto {[vars]tst_path}integration --log-cli-level=INFO -s {posargs}",
+    ],
+]
+dependency_groups = ["integration"]
+description = "Run integration tests"
