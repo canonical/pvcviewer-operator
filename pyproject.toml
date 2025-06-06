@@ -162,6 +162,7 @@ allowlist_externals = [
 commands = [
 	["tflint", "--chdir=terraform", "--recursive"]
 ]
+runner = "uv-venv-lock-runner"
 description = "Check Terraform code against coding style standards"
 
 [tool.tox.env.unit]
