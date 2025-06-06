@@ -112,7 +112,7 @@ passenv = [
 	"MODEL_SETTINGS",
 	"KUBECONFIG",
 ]
-set_env = { PYTHONPATH = "{toxinidir}:{toxinidir}/lib:{[vars]src_path}", PYTHONBREAKPOINT = "ipdb.set_trace", PY_COLORS = 1 }
+setenv = { PYTHONPATH = "{toxinidir}:{toxinidir}/lib:{[vars]src_path}", PYTHONBREAKPOINT = "ipdb.set_trace", PY_COLORS = "1" }
 
 [tool.tox.env.fmt]
 commands = [
