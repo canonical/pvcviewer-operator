@@ -11,7 +11,7 @@ bases:
 parts:
   charm:
     plugin: uv
-    uv-groups: [charm]
+    uv-extras: [charm]
     source: .
     build-packages: [cargo, rustc, pkg-config, libffi-dev, libssl-dev]
     build-snaps: [astral-uv]
