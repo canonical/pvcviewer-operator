@@ -101,7 +101,6 @@ skip_missing_interpreters = true
 envlist = ["fmt", "lint", "unit", "integration"]
 
 [vars]
-all_path = ["{[vars]src_path}", "{[vars]tst_path}"]
 src_path = "{toxinidir}/src/"
 tst_path = "{toxinidir}/tests/"
 
@@ -116,8 +115,8 @@ setenv = { PYTHONPATH = "{toxinidir}:{toxinidir}/lib:{[vars]src_path}", PYTHONBR
 
 [tool.tox.env.fmt]
 commands = [
-	["isort", "{[vars]all_path}"],
-	["black", "{[vars]all_path}"],
+	["isort", "{[vars]src_path}", "{[vars]tst_path}"],
+	["black", "{[vars]src_path}", "{[vars]tst_path}"],
 ]
 dependency_groups = ["fmt"]
 description = "Apply coding style standards to code"
@@ -147,9 +146,9 @@ commands = [
         "*.json.tmpl",
     ],
 	# pflake8 wrapper supports config from pyproject.toml
-	["pflake8", "{[vars]all_path}"],
-	["isort", "--check-only", "--diff", "{[vars]all_path}"],
-	["black", "--check", "--diff", "{[vars]all_path}"],
+	["pflake8", "{[vars]src_path}", "{[vars]tst_path}"],
+	["isort", "--check-only", "--diff", "{[vars]src_path}", "{[vars]tst_path}"],
+	["black", "--check", "--diff", "{[vars]src_path}", "{[vars]tst_path}"],
 ]
 dependency_groups = ["lint"]
 description = "Check code against coding style standards"
