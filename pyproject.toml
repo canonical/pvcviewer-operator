@@ -58,8 +58,8 @@ integration = [
 ]
 
 [tool.uv]
-# to ensure dependencies are built from source:
-no-binary = true
+# to ensure dependencies are built from source, set this to true or override it via uv CLI:
+no-binary = false
 
 # Testing tools configuration
 [tool.coverage.run]
