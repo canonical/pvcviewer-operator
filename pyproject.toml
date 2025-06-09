@@ -10,7 +10,7 @@ requires-python = ">=3.8"
 # ----------------------------------------------------------------------------
 # please, leave this list of project dependencies empty...
 dependencies = []
-# ... as dependency groups can instead be specified for the charm project via
+# ... as dependency extras can instead be specified for the charm project via
 # the uv plugin of Charmcraft - use the "charm" dependency group defined below
 # ----------------------------------------------------------------------------
 
