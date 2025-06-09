@@ -57,19 +57,9 @@ integration = [
     "charmed-kubeflow-chisme>=0.4.0",
 ]
 
-# ----------------------------------------------------------------------------
-# FIXME: the following settings must be debugged
-# ----------------------------------------------------------------------------
-# [tool.uv]
-# # to ensure dependencies are built from source:
-# no-binary = true
-# # mind these workarounds to their temporary issue:
-# # - https://github.com/canonical/charmcraft/issues/2259#issuecomment-2840047373
-# # - https://github.com/canonical/charmcraft/issues/2259#issuecomment-2842766428
-# build-constraint-dependencies = [
-#     "setuptools_scm < 8.3.0",
-# ]
-# ----------------------------------------------------------------------------
+[tool.uv]
+# to ensure dependencies are built from source:
+no-binary = true
 
 # Testing tools configuration
 [tool.coverage.run]
