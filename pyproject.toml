@@ -57,6 +57,10 @@ integration = [
     "charmed-kubeflow-chisme>=0.4.0",
 ]
 
+[tool.uv]
+# to ensure dependencies are built from source:
+no-binary = true
+
 # Testing tools configuration
 [tool.coverage.run]
 branch = true
