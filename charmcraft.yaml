@@ -8,5 +8,5 @@ parts:
     plugin: uv
     uv-extras: [charm]
     source: .
-    build-packages: [pkg-config, libffi-dev, libssl-dev, rustup, build-essential python3-dev]
+    build-packages: [pkg-config, libffi-dev, libssl-dev, rustup, build-essential, python3-dev]
     build-snaps: [astral-uv]
