@@ -123,7 +123,9 @@ jobs:
         # - https://github.com/tox-dev/tox-uv
         uv tool install tox --with tox-uv
   
-        # making sure the specific tox managed by uv is used:
+        # making sure the specific tox managed by uv is used and not the one
+        # inherited from the previus GitHub action step:
+        pip uninstall -y tox
         uv tool update-shell
 
     # Running with kubeflow model because of upstream issue https://github.com/kubeflow/kubeflow/issues/7283
