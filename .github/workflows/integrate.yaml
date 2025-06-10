@@ -111,6 +111,18 @@ jobs:
         microk8s-addons: "dns hostpath-storage rbac metallb:10.64.140.43-10.64.140.49"
         charmcraft-channel: 3.x/stable
 
+    - name: Install dependencies
+      run: |
+        # installing uv - see:
+        # https://docs.astral.sh/uv/getting-started/installation/
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+
+        # installing tox via uv together with the plugin to manage tox
+        # environments via uv itself - see:
+        # - https://tox.wiki/en/latest/installation.html
+        # - https://github.com/tox-dev/tox-uv
+        uv tool install tox --with tox-uv
+
     # Running with kubeflow model because of upstream issue https://github.com/kubeflow/kubeflow/issues/7283
     - name: Run integration tests
       run: tox -vve integration -- --model kubeflow
