@@ -80,7 +80,7 @@ jobs:
 
   terraform-checks:
     name: Terraform
-    uses: canonical/charmed-kubeflow-workflows/.github/workflows/terraform-checks.yaml@main
+    uses: canonical/charmed-kubeflow-workflows/.github/workflows/terraform-checks.yaml@feat/tox-uv-support
     with:
       charm-path: .
       tox-uv: true
