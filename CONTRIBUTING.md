@@ -17,7 +17,8 @@ By point 2., `uv` will let you know if there are any dependency conflicts to sol
 
 To run `tox` environments locally, just:
 1. install `tox` as an `uv` tool together with the required `tox-uv` plugin: `uv tool install tox --with tox-uv`
-2. run `tox` as you would natively (e.g.: `tox -e lint`)
+2. make sure the specific tox managed by uv is found by default: `uv tool update-shell`
+3. run `tox` as you would natively (e.g.: `tox -e lint`)
 
 ### Running Python Environments
 
