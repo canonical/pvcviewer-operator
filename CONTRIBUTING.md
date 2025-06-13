@@ -22,4 +22,4 @@ To run `tox` environments locally, just:
 
 ### Running Python Environments
 
-To run Python commans/scripts locally from any environments with any combination of dependency extras, simply run `uv run --extra <your-extra-a> --extra <your-extra-b> python3 <whatever>` (or `uv sync --all-extras python3 <whatever>`)
+To run Python commands/scripts locally from any environments with any combination of dependency extras, simply run `uv run --extra <your-extra-a> --extra <your-extra-b> python3 <whatever>` (or `uv sync --all-extras python3 <whatever>`)
