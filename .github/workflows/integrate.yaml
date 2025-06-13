@@ -29,11 +29,6 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v4
-
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v5.3.0
-      with:
-        python-version: 3.12
   
     - name: Install dependencies
       run: |
@@ -57,11 +52,6 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v4
-
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v5.3.0
-      with:
-        python-version: 3.12
 
     - name: Install dependencies
       run: |
@@ -99,10 +89,6 @@ jobs:
         remove-codeql: 'true'
         remove-docker-images: 'true'
     - uses: actions/checkout@v4
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v5.3.0
-      with:
-        python-version: 3.12
     - name: Setup operator environment
       uses: charmed-kubernetes/actions-operator@main
       with:
