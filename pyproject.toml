@@ -24,11 +24,11 @@ charm = [
     "cosl",
 ]
 fmt = [
-	"black",
+    "black",
     "isort",
 ]
 lint = [
-	"black",
+    "black",
     "codespell",
     "flake8",
     "flake8-builtins",
@@ -46,7 +46,7 @@ unit = [
     "pyyaml",
 ]
 integration = [
-	"aiohttp",
+    "aiohttp",
     # Pinning to <4.0 due to compatibility with the 3.1 controller version
     "juju<4.0",
     "lightkube",
