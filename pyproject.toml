@@ -6,7 +6,7 @@ name = "pvcviewer-operator"
 version = "0.1.0"
 description = "Charmed PVC Viewer: a Juju Operator for PCV Viewer"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.12"
 # ----------------------------------------------------------------------------
 # please, leave this list of project dependencies empty...
 dependencies = []
