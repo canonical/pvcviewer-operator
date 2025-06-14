@@ -6,7 +6,7 @@
 
 To add/update/remove any dependencies and/or to upgrade Python, simply:
 1. first add/update/remove such dependencies to/in/from the desired group(s) below `[project.optional-dependencies]` ("extras") in `pyproject.toml`, and/or upgrade Python itself in `.python-version`
-  _⚠️ dependencies for the charm itself are also defined below `[project.optional-dependencies]` as extras, specifically in the `charm` section, and not below `[project]` as project dependencies (see above why) ⚠️_
+  _⚠️ dependencies for the charm itself are also defined below `[project.optional-dependencies]` as extras, specifically in the `charm` section, and not below `[project]` as project dependencies ⚠️_
 2. then run:
     - either `uv lock` to just update your lock file
     - or alternatively `uv sync --extra <your-extra-a> --extra <your-extra-b>` (or `uv sync --all-extras`) if you also want to update your local environment together with your lock file, so that you will be able to run Python code from your `uv` environment locally using `uv run python3 <whatever>`
