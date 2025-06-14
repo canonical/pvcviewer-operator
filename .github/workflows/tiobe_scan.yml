@@ -13,15 +13,22 @@ jobs:
       - name: Checkout the project
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.8
+      - name: Set up Python 3.12
         uses: actions/setup-python@v5.3.0
         with:
-          python-version: 3.8
+          python-version: 3.12
 
       - name: Install dependencies
         run: |
-          pip install tox
-          pip install pylint flake8
+          # installing uv - see:
+          # https://docs.astral.sh/uv/getting-started/installation/
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+
+          # installing tox via uv together with the plugin to manage tox
+          # environments via uv itself - see:
+          # - https://tox.wiki/en/latest/installation.html
+          # - https://github.com/tox-dev/tox-uv
+          uv tool install tox --with tox-uv
 
       - name: Run tox tests to create coverage.xml
         run: tox run -e unit

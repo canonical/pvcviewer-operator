@@ -1,3 +1,4 @@
+# Copyright 2025 Canonical Ltd.
 """Charms dependencies for tests."""
 
 from charmed_kubeflow_chisme.testing import CharmSpec
