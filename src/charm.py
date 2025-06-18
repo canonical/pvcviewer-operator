@@ -34,9 +34,9 @@ from lightkube.resources.rbac_authorization_v1 import (
     Role,
     RoleBinding,
 )
+from ops import main
 from ops.charm import CharmBase
 from ops.framework import StoredState
-from ops.main import main
 
 from certs import gen_certs
 from components.pebble_component import PvcViewerPebbleService
