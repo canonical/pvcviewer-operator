@@ -50,7 +50,7 @@ jobs:
     - name: Install poetry
       uses: ./.github/actions/install-poetry
 
-    - name: Install dependencies
+    - name: Install tox
       run: pip install tox
 
     - name: Run unit tests
