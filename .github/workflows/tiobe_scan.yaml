@@ -18,6 +18,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install poetry
+        uses: ./.github/actions/install-poetry
+
       - name: Install dependencies
         run: |
           pip install tox

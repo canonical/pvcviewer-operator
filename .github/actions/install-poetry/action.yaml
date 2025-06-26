@@ -1,0 +1,27 @@
+name: Install poetry
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install poetry in Its Own Virtual Environment
+      shell: bash
+      run: |
+        # installing poerty "manually" - see:
+        # https://python-poetry.org/docs/#installing-manually
+        python3 -m venv venv
+        venv/bin/pip install -U pip setuptools
+        venv/bin/pip install poetry==2.1.3
+
+    - name: Ensure poetry can be Invoked Outside of its Virtual Environment
+      shell: bash
+      run: |
+        # ensuring poetry is available in its own environment:
+        venv/bin/poetry --version
+
+        # aliasing poetry from its own environment:
+        echo 'alias poetry="venv/bin/poetry"' >> ~/.bash_aliases
+        source ~/.bashrc
+
+        # ensuring poetry is available via its alias:
+        poetry --version
+
