@@ -15,13 +15,13 @@ runs:
     - name: Ensure poetry can be Invoked Outside of its Virtual Environment
       shell: bash
       run: |
-        # ensuring poetry is available in its own environment:
+        # ensuring poetry is available inside its own environment:
         venv/bin/poetry --version
 
-        # aliasing poetry from its own environment:
-        echo 'alias poetry="venv/bin/poetry"' >> ~/.bash_aliases
+        # adding poetry's binary from its own environment to the path:
+        echo 'export PATH="$PATH:$PWD/venv/bin/poetry"' >> ~/.bashrc
         source ~/.bashrc
 
-        # ensuring poetry is available via its alias:
+        # ensuring poetry is available outside its environemnt:
         poetry --version
 
