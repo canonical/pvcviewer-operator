@@ -24,7 +24,6 @@ jobs:
       - name: Install tox
         run: |
           pip install tox
-          pip install pylint flake8
 
       - name: Run tox tests to create coverage.xml
         run: tox run -e unit
