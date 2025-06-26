@@ -22,6 +22,10 @@ runs:
         echo 'export PATH="$PATH:$PWD/venv/bin"' >> ~/.bashrc
         source ~/.bashrc
 
+        cat $PWD
+        cat ~/.bashrc
+        cat $PATH
+
         # ensuring poetry is available outside its environemnt:
         poetry --version
 
