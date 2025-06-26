@@ -19,12 +19,9 @@ runs:
         venv/bin/poetry --version
 
         # adding poetry's binary from its own environment to the path:
-        echo "export PATH=\"\$PATH:$PWD/venv/bin\"" >> ~/.bashrc
-        source ~/.bashrc
+        echo "$PWD/venv/bin" >> "$GITHUB_PATH"
 
-        echo $PWD
-        cat ~/.bashrc
-        echo $PATH
+        echo $GITHUB_PATH
 
         # ensuring poetry is available outside its environemnt:
         poetry --version
