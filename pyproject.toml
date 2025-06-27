@@ -12,51 +12,51 @@ package-mode = false
 optional = true
 [tool.poetry.group.charm.dependencies]
 charmed-kubeflow-chisme = "^0.4.11"
-ops = "^2.22.0"
-serialized-data-interface = "^0.7.0"
-cosl = "^1.0.0"
+ops = "*"
+serialized-data-interface = "*"
+cosl = "*"
 
 [tool.poetry.group.update-requirements]
 optional = true
 [tool.poetry.group.update-requirements.dependencies]
-poetry-plugin-export = "^1.9.0"
+poetry-plugin-export = "*"
 
 [tool.poetry.group.fmt]
 optional = true
 [tool.poetry.group.fmt.dependencies]
-black = "^25.1.0"
-isort = "^6.0.1"
+black = "*"
+isort = "*"
 
 [tool.poetry.group.lint]
 optional = true
 [tool.poetry.group.lint.dependencies]
-black = "^25.1.0"
-codespell = "^2.4.1"
-flake8 = "^7.0.0"
-flake8-builtins = "^2.5.0"
-flake8-copyright = "^0.2.4"
-isort = "^6.0.1"
-pep8-naming = "^0.15.1"
-pyproject-flake8 = "^7.0.0"
+black = "*"
+codespell = "*"
+flake8 = "*"
+flake8-builtins = "*"
+flake8-copyright = "*"
+isort = "*"
+pep8-naming = "*"
+pyproject-flake8 = "*"
 
 [tool.poetry.group.unit]
 optional = true
 [tool.poetry.group.unit.dependencies]
-coverage = "^7.9.1"
-ops = "^2.22.0"
-pytest = "^8.4.1"
-pytest-mock = "^3.14.1"
-pytest-lazy-fixture = "^0.6.3"
-pyyaml = "^6.0.2"
+coverage = "*"
+ops = "*"
+pytest = "*"
+pytest-mock = "*"
+pytest-lazy-fixture = "*"
+pyyaml = "*"
 
 [tool.poetry.group.integration]
 optional = true
 [tool.poetry.group.integration.dependencies]
-aiohttp = "^3.12.13"
+aiohttp = "*"
 juju = "<4.0"
-lightkube = "^0.15.6"
-pytest-operator = "^0.42.0"
-tenacity = "^9.1.2"
+lightkube = "*"
+pytest-operator = "*"
+tenacity = "*"
 charmed-kubeflow-chisme = ">=0.4.11"
 
 # Testing tools configuration
