@@ -1,6 +1,6 @@
 ## How to Manage Python Dependencies and Environments
 
-`poetry` and optionally `tox` are the only tools required locally. `poetry` is required both to manage dependencies and to run `tox` environments (as `tox` internally relies on `poetry` to run its environments), while `tox` is only required to the latter purpose. Refer to the respective official docs for [installing poetry](https://python-poetry.org/docs/#installation) and [installing tox](https://tox.wiki/en/latest/installation.html).
+`poetry` and optionally `tox` are the only tools required locally. `poetry` is required both to manage dependencies and to run `tox` environments (as `tox` internally relies on `poetry`), while `tox` is only required to the latter purpose and to export charm dependencies in `requirements.txt`-like format for `charmcraft`. Refer to the respective official docs for [installing poetry](https://python-poetry.org/docs/#installation) and [installing tox](https://tox.wiki/en/latest/installation.html).
 
 
 ### Updating Dependencies
@@ -11,7 +11,9 @@ To add/update/remove any dependencies and/or to upgrade Python, simply:
 
     _⚠️ dependencies for the charm itself are also defined as dependencies of a dedicated group called `charm`, specifically below `[tool.poetry.group.charm.dependencies]`, and not as project dependencies below `[project.dependencies]` or `[tool.poetry.dependencies]` ⚠️_
 
-2. then run `poetry lock --regenerate` to update your lock file
+2. then:
+    - either run `tox -e update-requirements` to update not only the lock file but also the exported `requirements.txt`-like charm dependencies used by `charmcraft`
+    - or run `poetry lock --regenerate` to only update the lock file
 
 3. optionally, if you also want to update your local environment for running Python commands/scripts, see [Running Python Environments](#running-python-environments) below
 
