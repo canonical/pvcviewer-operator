@@ -20,7 +20,7 @@ jobs:
 
       - name: Install tox
         run: |
-          python3 -m pip install pipx-in-pipx --user
+          sudo apt update && sudo apt install pipx && pipx ensurepath
           pipx install tox
 
       - name: Run tox tests to create coverage.xml
