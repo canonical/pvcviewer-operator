@@ -18,9 +18,6 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install poetry
-        uses: ./.github/actions/install-poetry
-
       - name: Install tox
         run: |
           python3 -m pip install pipx-in-pipx --user

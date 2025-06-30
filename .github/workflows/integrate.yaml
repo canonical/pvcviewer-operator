@@ -30,9 +30,6 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v4
 
-    - name: Install poetry
-      uses: ./.github/actions/install-poetry
-
     - name: Install tox
       run: |
         python3 -m pip install pipx-in-pipx --user
@@ -48,9 +45,6 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v4
-
-    - name: Install poetry
-      uses: ./.github/actions/install-poetry
 
     - name: Install tox
       run: |
@@ -88,9 +82,6 @@ jobs:
         channel: 1.32-strict/stable
         microk8s-addons: "dns hostpath-storage rbac metallb:10.64.140.43-10.64.140.49"
         charmcraft-channel: 3.x/stable
-
-    - name: Install poetry
-      uses: ./.github/actions/install-poetry
 
     # Running with kubeflow model because of upstream issue https://github.com/kubeflow/kubeflow/issues/7283
     - name: Run integration tests
