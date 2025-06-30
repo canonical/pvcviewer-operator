@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Check libs
@@ -28,13 +28,15 @@ jobs:
 
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Install poetry
       uses: ./.github/actions/install-poetry
 
     - name: Install tox
-      run: pip install tox
+      run: |
+        python3 -m pip install pipx-in-pipx --user
+        pipx install tox
 
     - name: Lint code
       run: tox -e lint
@@ -45,13 +47,15 @@ jobs:
 
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Install poetry
       uses: ./.github/actions/install-poetry
 
     - name: Install tox
-      run: pip install tox
+      run: |
+        python3 -m pip install pipx-in-pipx --user
+        pipx install tox
 
     - name: Run unit tests
       run: tox -e unit
@@ -75,7 +79,7 @@ jobs:
         remove-android: 'true'
         remove-codeql: 'true'
         remove-docker-images: 'true'
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Setup operator environment
       uses: charmed-kubernetes/actions-operator@main
       with:

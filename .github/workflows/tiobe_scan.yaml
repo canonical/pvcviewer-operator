@@ -23,7 +23,8 @@ jobs:
 
       - name: Install tox
         run: |
-          pip install tox
+          python3 -m pip install pipx-in-pipx --user
+          pipx install tox
 
       - name: Run tox tests to create coverage.xml
         run: tox run -e unit
