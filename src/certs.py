@@ -2,6 +2,11 @@
 # See LICENSE file for licensing details.
 
 
+"""
+Utilities for generating certificates.
+"""
+
+
 import tempfile
 from pathlib import Path
 from subprocess import check_call
@@ -13,7 +18,6 @@ SSL_CONFIG_FILE = "src/templates/ssl.conf.j2"
 
 def gen_certs(service_name: str, namespace: str, webhook_service: str):
     """Generate certificates."""
-
     template = Template(Path(SSL_CONFIG_FILE).read_text())
     ssl_conf = template.render(
         service_name=str(service_name),

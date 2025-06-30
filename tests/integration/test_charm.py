@@ -35,7 +35,7 @@ EXAMPLE_PATH = "/pvcviewer/kubeflow-user-example-com/pvcviewer-sample/files/"
 
 @pytest.fixture(scope="session")
 def lightkube_client() -> lightkube.Client:
-    """Returns lightkube Kubernetes client"""
+    """Return lightkube Kubernetes client."""
     client = lightkube.Client(field_manager=f"{CHARM_NAME}")
     create_namespaced_resource(
         group="kubeflow.org", version="v1alpha1", kind="PVCViewer", plural="pvcviewers"
@@ -44,7 +44,7 @@ def lightkube_client() -> lightkube.Client:
 
 
 def _safe_load_file_to_text(filename: str):
-    """Returns the contents of filename if it is an existing file, else it returns filename."""
+    """Return the contents of filename if it is an existing file, else it returns filename."""
     try:
         text = Path(filename).read_text()
     except FileNotFoundError:
@@ -53,7 +53,7 @@ def _safe_load_file_to_text(filename: str):
 
 
 def deploy_example(lightkube_client: lightkube.Client):
-    """Creates a PVCViewer example namespace with manifests."""
+    """Create a PVCViewer example namespace with manifests."""
     yaml_text = _safe_load_file_to_text(EXAMPLE_FILE)
 
     for obj in codecs.load_all_yaml(yaml_text):
@@ -64,7 +64,7 @@ def deploy_example(lightkube_client: lightkube.Client):
 
 
 def get_ingress_url(lightkube_client: lightkube.Client, model_name: str):
-    """Returns url of ingress gateway in the cluster"""
+    """Return url of ingress gateway in the cluster."""
     gateway_svc = lightkube_client.get(
         Service, "istio-ingressgateway-workload", namespace=model_name
     )
@@ -93,7 +93,6 @@ async def test_build_and_deploy(ops_test: OpsTest):
 
     Assert on the unit status before any relations/configurations take place.
     """
-
     # Deploy istio-operators for ingress configuration
     await ops_test.model.deploy(
         ISTIO_PILOT.charm,

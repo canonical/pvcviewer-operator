@@ -1,5 +1,12 @@
 # Copyright 2024 Canonical Ltd.
 # See LICENSE file for licensing details.
+
+
+"""
+Pebble service definition.
+"""
+
+
 import logging
 
 from charmed_kubeflow_chisme.components.pebble_component import PebbleServiceComponent
@@ -9,10 +16,13 @@ logger = logging.getLogger(__name__)
 
 
 class PvcViewerPebbleService(PebbleServiceComponent):
+    """
+    Pebble service.
+    """
     def get_layer(self) -> Layer:
-        """Defines and returns Pebble layer configuration
+        """Define and return Pebble layer configuration.
 
-        This method is required for subclassing PebbleServiceContainer
+        This method is required for subclassing PebbleServiceContainer.
         """
         logger.info("PebbleServiceComponent.get_layer executing")
         return Layer(
