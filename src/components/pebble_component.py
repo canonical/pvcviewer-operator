@@ -2,9 +2,7 @@
 # See LICENSE file for licensing details.
 
 
-"""
-Pebble service definition.
-"""
+"""Pebble service definition."""
 
 
 import logging
@@ -16,9 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class PvcViewerPebbleService(PebbleServiceComponent):
-    """
-    Pebble service.
-    """
+    """Pebble service."""
     def get_layer(self) -> Layer:
         """Define and return Pebble layer configuration.
 

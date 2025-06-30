@@ -2,9 +2,7 @@
 # See LICENSE file for licensing details.
 
 
-"""
-Utilities for generating certificates.
-"""
+"""Utilities for generating certificates."""
 
 
 import tempfile

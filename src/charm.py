@@ -55,7 +55,7 @@ K8S_RESOURCE_FILES = [
 
 
 class PvcViewer(CharmBase):
-    """PvcViewer Charm"""
+    """PvcViewer Charm."""
     _stored = StoredState()
 
     def __init__(self, *args):
