@@ -4,7 +4,6 @@
 
 """Utilities for generating certificates."""
 
-
 import tempfile
 from pathlib import Path
 from subprocess import check_call

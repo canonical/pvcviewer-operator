@@ -4,7 +4,6 @@
 
 """Pebble service definition."""
 
-
 import logging
 
 from charmed_kubeflow_chisme.components.pebble_component import PebbleServiceComponent
@@ -15,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 class PvcViewerPebbleService(PebbleServiceComponent):
     """Pebble service."""
+
     def get_layer(self) -> Layer:
         """Define and return Pebble layer configuration.
 
