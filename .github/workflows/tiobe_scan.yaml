@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install tox
+      - name: Install dependencies
         run: |
           sudo apt update && sudo apt install pipx && pipx ensurepath
           pipx install tox
