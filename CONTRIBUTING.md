@@ -25,7 +25,7 @@ To run `tox` environments locally, ensure to have `tox` installed first and then
 
 ### Running Python Environments
 
-To run Python commands/scripts locally from any environments built from any combinations of dependency groups without relying on `tox`:
-1. make sure you have `poetry` installed
-1. install any dependency groups that compose the environment of interest: `poetry install --only <your-group-a>,<your-group-b>` (or all groups, if you prefer: `poetry install --all-groups`)
-2. run Python commands/scripts via poetry: `poetry run python3 <whatever>`
+To run Python commands locally from any environments built from any combinations of dependency groups without relying on `tox`:
+1. ensure you have `poetry` installed
+2. install any required dependency groups: `poetry install --only <your-group-a>,<your-group-b>` (or all groups, if you prefer: `poetry install --all-groups`)
+3. run Python commands via poetry: `poetry run python3 <your-command>`
