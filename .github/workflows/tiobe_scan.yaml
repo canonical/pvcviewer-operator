@@ -19,9 +19,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: |
-          sudo apt update && sudo apt install pipx && pipx ensurepath
-          pipx install tox
+        run: pipx install tox
 
       - name: Run tox tests to create coverage.xml
         run: tox run -e unit
