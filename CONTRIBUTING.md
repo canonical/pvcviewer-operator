@@ -7,11 +7,11 @@
 
 To add/update/remove any dependencies and/or to upgrade Python, simply:
 
-1. first add/update/remove such dependencies to/in/from the desired group(s) below `[tool.poetry.group.<your-group>.dependencies]` in `pyproject.toml`, and/or upgrade Python itself in `requires-python` under `[project]`
+1. add/update/remove such dependencies to/in/from the desired group(s) below `[tool.poetry.group.<your-group>.dependencies]` in `pyproject.toml`, and/or upgrade Python itself in `requires-python` under `[project]`
 
     _⚠️ dependencies for the charm itself are also defined as dependencies of a dedicated group called `charm`, specifically below `[tool.poetry.group.charm.dependencies]`, and not as project dependencies below `[project.dependencies]` or `[tool.poetry.dependencies]` ⚠️_
 
-2. then run `tox -e update-requirements` to update not only the lock file but also the exported `requirements.txt`-like charm dependencies used by `charmcraft`
+2. run `tox -e update-requirements` to update not only the lock file but also the exported `requirements.txt`-like charm dependencies used by `charmcraft`
 
 3. optionally, if you also want to update your local environment for running Python commands/scripts yourself and not through tox, see [Running Python Environments](#running-python-environments) below
 
