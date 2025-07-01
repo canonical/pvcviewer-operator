@@ -13,9 +13,9 @@ To add/update/remove any dependencies and/or to upgrade Python, simply:
 
 2. run `tox -e update-requirements` to update not only the lock file but also the exported `requirements.txt`-like charm dependencies used by `charmcraft`
 
-3. optionally, if you also want to update your local environment for running Python commands/scripts yourself and not through tox, see [Running Python Environments](#running-python-environments) below
+    by this point, `poerty`, through `tox`, will let you know if there are any dependency conflicts to solve.
 
-By point 2., `poerty`, through `tox`, will let you know if there are any dependency conflicts to solve.
+3. optionally, if you also want to update your local environment for running Python commands/scripts yourself and not through tox, see [Running Python Environments](#running-python-environments) below
 
 
 ### Running `tox` Environments
