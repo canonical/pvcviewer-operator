@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class PvcViewerPebbleService(PebbleServiceComponent):
-    """Pebble service."""
+    """Pebble service component."""
 
     def get_layer(self) -> Layer:
         """Define and return Pebble layer configuration.
