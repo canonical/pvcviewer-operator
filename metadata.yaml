@@ -5,7 +5,7 @@ summary: |
   A charm which provides a Kubernetes installation of the PVCViewer (https://github.com/kubeflow/kubeflow/tree/master/components/pvcviewer-controller).
 description: |
   PVCViewers enable users to open a filebrowser on arbitrary persistent volume claims, letting them inspect, download, upload and manipulate data.
-  
+
   The PVCViewer API is meant to be extensible and can easily be user for other use-cases, such as launching user-tailored apps (e.g. tensorboards or notebooks).
 website: https://charmhub.io/pvcviewer-operator
 source: https://github.com/canonical/pvcviewer-operator
@@ -18,7 +18,7 @@ resources:
   oci-image:
     type: oci-image
     description: Backing OCI image
-    upstream-source: charmedkubeflow/pvcviewer-controller:1.10.0-09b616f
+    upstream-source: docker.io/charmedkubeflow/pvcviewer-controller:1.10.0-a3ceb13
 requires:
   logging:
     interface: loki_push_api
