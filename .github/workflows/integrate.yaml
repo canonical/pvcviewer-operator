@@ -80,7 +80,7 @@ jobs:
           sudo snap install concierge --classic
           sudo concierge prepare --trace
     - name: Run integration tests
-      run: tox -vve integration -- --model kubeflow
+      run: tox -vve integration
 
     # On failure, capture debugging resources      
     - name: Get all
