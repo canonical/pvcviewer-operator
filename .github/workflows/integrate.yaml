@@ -57,7 +57,7 @@ jobs:
       charm-path: .
 
   integration:
-    name: Integration tests (microk8s)
+    name: Integration tests
     runs-on: ubuntu-24.04
     steps:
     - name: Maximise GH runner space
@@ -80,7 +80,8 @@ jobs:
         sudo snap install concierge --classic
         sudo concierge prepare --trace
     - name: Run integration tests
-      run: tox -vve integration
+      # Running with kubeflow model because of upstream issue https://github.com/kubeflow/kubeflow/issues/7283
+      run: tox -vve integration -- --model kubeflow
 
     # On failure, capture debugging resources      
     - name: Get all
