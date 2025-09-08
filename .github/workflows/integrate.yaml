@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Check libs
@@ -28,10 +28,10 @@ jobs:
 
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Install dependencies
-      run: pip install tox
+      run: pipx install tox
 
     - name: Lint code
       run: tox -e lint
@@ -42,10 +42,10 @@ jobs:
 
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Install dependencies
-      run: pip install tox
+      run: pipx install tox
 
     - name: Run unit tests
       run: tox -e unit
@@ -57,7 +57,7 @@ jobs:
       charm-path: .
 
   integration:
-    name: Integration tests (microk8s)
+    name: Integration tests
     runs-on: ubuntu-24.04
     steps:
     - name: Maximise GH runner space
@@ -69,18 +69,18 @@ jobs:
         remove-android: 'true'
         remove-codeql: 'true'
         remove-docker-images: 'true'
-    - uses: actions/checkout@v2
-    - name: Setup operator environment
-      uses: charmed-kubernetes/actions-operator@main
-      with:
-        juju-channel: 3.6/stable
-        provider: microk8s
-        channel: 1.32-strict/stable
-        microk8s-addons: "dns hostpath-storage rbac metallb:10.64.140.43-10.64.140.49"
-        charmcraft-channel: 3.x/stable
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: pipx install tox
 
-    # Running with kubeflow model because of upstream issue https://github.com/kubeflow/kubeflow/issues/7283
+    - name: Setup environment
+      run: |
+        sudo apt-get remove -y docker-ce docker-ce-cli containerd.io
+        sudo rm -rf /run/containerd
+        sudo snap install concierge --classic
+        sudo concierge prepare --trace
     - name: Run integration tests
+      # Running with kubeflow model because of upstream issue https://github.com/kubeflow/kubeflow/issues/7283
       run: tox -vve integration -- --model kubeflow
 
     # On failure, capture debugging resources      
