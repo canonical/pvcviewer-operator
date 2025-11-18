@@ -14,6 +14,8 @@ docs: https://discourse.charmhub.io/t/8212
 containers:
   pvcviewer-operator:
     resource: oci-image
+    gid: 584792
+    uid: 584792
 resources:
   oci-image:
     type: oci-image
@@ -28,3 +30,4 @@ provides:
     interface: prometheus_scrape
   grafana-dashboard:
     interface: grafana_dashboard
+charm-user: non-root
