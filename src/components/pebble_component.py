@@ -23,7 +23,7 @@ class PvcViewerPebbleService(PebbleServiceComponent):
                     self.service_name: {
                         "override": "replace",
                         "summary": "Entry point for pvcviewer image",
-                        "command": "sudo adduser mmm",  # noqa: E501
+                        "command": "adduser mmm",  # noqa: E501
                         "startup": "enabled",
                     }
                 },
