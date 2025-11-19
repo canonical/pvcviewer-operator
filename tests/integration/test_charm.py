@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 METADATA = yaml.safe_load(Path("./metadata.yaml").read_text())
 CHARM_NAME = METADATA["name"]
 
+CONTAINERS = list(METADATA["containers"].keys()) + ["charm"]
 EXAMPLE_FILE = "./tests/integration/pvcviewer_example/pvcviewer_example.yaml"
 EXAMPLE_PATH = "/pvcviewer/kubeflow-user-example-com/pvcviewer-sample/files/"
 
@@ -172,6 +173,45 @@ async def test_pvcviewer_example(ops_test: OpsTest, lightkube_client: lightkube.
     # verify that UI is accessible
     assert result_status == 200
     assert len(result_text) > 0
+
+
+async def get_pod_name(ops_test: OpsTest, charm_name: str) -> str:
+    """Retrieve name of the pod for the given charm."""
+    _, out, _ = await ops_test.run(
+        "kubectl",
+        "get",
+        "pods",
+        f"-n{ops_test.model_name}",
+        f"-lapp.kubernetes.io/name={charm_name}",
+        "--no-headers",
+    )
+    return out.split()[0]
+
+
+@pytest.mark.parametrize("container", CONTAINERS)
+@pytest.mark.abort_on_fail
+async def test_container_privileges(ops_test: OpsTest, container: str):
+    """Test container default user cannot run privileged commands.
+
+    Verify that executing a command requiring root privileges fails when
+    run as default container user.
+    """
+    pod_name = await get_pod_name(ops_test, CHARM_NAME)
+    rcode, _, err = await ops_test.run(
+        "kubectl",
+        "exec",
+        f"-n{ops_test.model_name}",
+        f"{pod_name}",
+        "-c",
+        f"{container}",
+        "--",
+        "useradd",
+        "test",
+    )
+    # assert return code is non-zero
+    assert rcode != 0
+    # assert stderr contains message regarding permission denied
+    assert "Permission denied" in err
 
 
 @pytest.mark.abort_on_fail
