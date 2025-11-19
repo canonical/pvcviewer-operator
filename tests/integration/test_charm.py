@@ -175,6 +175,38 @@ async def test_pvcviewer_example(ops_test: OpsTest, lightkube_client: lightkube.
 
 
 @pytest.mark.abort_on_fail
+async def test_failure_of_privileged_command_in_workload(ops_test: OpsTest):
+    """Test some privileged command fails to run in the workload container.
+
+    Override the Pebble service's command with some other command that requires
+    root privileges to eventually assert that the Pebble service fails because
+    of insufficient permissions.
+    """
+    charm_container_name = "charm"
+    pebble_service_name = CHARM_NAME
+
+    unit = ops_test.model.applications[CHARM_NAME].units[0]
+    charm_container = unit.get_container(charm_container_name)
+
+    new_pebble_layer = {
+        "summary": "pvcviewer layer",
+        "description": "Pebble config layer for pvcviewer",
+        "services": {
+            pebble_service_name: {
+                "override": "replace",
+                "summary": "Entry point for pvcviewer image",
+                "command": "adduser whateverusername",
+                "startup": "enabled",
+            }
+        },
+    }
+    charm_container.add_layer(charm_container_name, new_pebble_layer, combine=True)
+    await charm_container.replan()
+
+    assert not charm_container.get_service(pebble_service_name).is_running()
+
+
+@pytest.mark.abort_on_fail
 async def test_remove_deletes_virtual_service(
     ops_test: OpsTest, lightkube_client: lightkube.Client
 ):
