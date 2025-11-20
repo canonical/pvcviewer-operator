@@ -29,7 +29,6 @@ logger = logging.getLogger(__name__)
 METADATA = yaml.safe_load(Path("./metadata.yaml").read_text())
 CHARM_NAME = METADATA["name"]
 
-CONTAINERS = list(METADATA["containers"].keys()) + ["charm"]
 EXAMPLE_FILE = "./tests/integration/pvcviewer_example/pvcviewer_example.yaml"
 EXAMPLE_PATH = "/pvcviewer/kubeflow-user-example-com/pvcviewer-sample/files/"
 
@@ -188,7 +187,18 @@ async def get_pod_name(ops_test: OpsTest, charm_name: str) -> str:
     return out.split()[0]
 
 
-@pytest.mark.parametrize("container", CONTAINERS)
+def generate_container_uid_map():
+    c_uid_map = {}
+    for k, v in METADATA["containers"].items():
+        c_uid_map[k] = str(v.get("uid"))
+    c_uid_map["charm"] = "juju"
+    return c_uid_map
+
+
+CONTAINERS_UID_MAP = generate_container_uid_map()
+
+
+@pytest.mark.parametrize("container", list(CONTAINERS_UID_MAP.keys()))
 @pytest.mark.abort_on_fail
 async def test_container_privileges(ops_test: OpsTest, container: str):
     """Test container default user cannot run privileged commands.
@@ -197,7 +207,7 @@ async def test_container_privileges(ops_test: OpsTest, container: str):
     run as default container user.
     """
     pod_name = await get_pod_name(ops_test, CHARM_NAME)
-    rcode, _, err = await ops_test.run(
+    rcode, out, _ = await ops_test.run(
         "kubectl",
         "exec",
         f"-n{ops_test.model_name}",
@@ -205,13 +215,15 @@ async def test_container_privileges(ops_test: OpsTest, container: str):
         "-c",
         f"{container}",
         "--",
-        "useradd",
-        "test",
+        "pgrep",
+        "-u",
+        f"{CONTAINERS_UID_MAP.get(container)}",
+        "pebble",
     )
-    # assert return code is non-zero
-    assert rcode != 0
-    # assert stderr contains message regarding permission denied
-    assert "Permission denied" in err
+    # assert return code is zero, meaning pebble is run by expected user
+    assert rcode == 0
+    # assert stdout contains pebble PID (always 1)
+    assert out.strip() == "1"
 
 
 @pytest.mark.abort_on_fail
