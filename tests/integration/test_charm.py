@@ -20,7 +20,7 @@ from charmed_kubeflow_chisme.testing import (
 from charms_dependencies import ISTIO_GATEWAY, ISTIO_PILOT
 from lightkube import codecs
 from lightkube.generic_resource import create_namespaced_resource
-from lightkube.resources.core_v1 import Service
+from lightkube.resources.core_v1 import Pod, Service
 from pytest_operator.plugin import OpsTest
 from tenacity import retry, stop_after_delay, wait_fixed
 
@@ -190,21 +190,20 @@ async def get_pod_name(ops_test: OpsTest, charm_name: str) -> str:
 def generate_container_uid_map():
     c_uid_map = {}
     for k, v in METADATA["containers"].items():
-        c_uid_map[k] = str(v.get("uid"))
-    c_uid_map["charm"] = "juju"
+        c_uid_map[k] = {"uid": v.get("uid"), "gid": v.get("gid")}
+    c_uid_map["charm"] = {"uid": 170, "gid": 170}
     return c_uid_map
 
 
 CONTAINERS_UID_MAP = generate_container_uid_map()
 
 
-@pytest.mark.parametrize("container", list(CONTAINERS_UID_MAP.keys()))
+@pytest.mark.parametrize("container_name", list(CONTAINERS_UID_MAP.keys()))
 @pytest.mark.abort_on_fail
-async def test_container_privileges(ops_test: OpsTest, container: str):
-    """Test container default user cannot run privileged commands.
+async def test_container_privileges(ops_test: OpsTest, container_name: str):
+    """Test pebble process is run as the expected non-user.
 
-    Verify that executing a command requiring root privileges fails when
-    run as default container user.
+    Verify that Pebble process is run as the user defined in metadata.
     """
     pod_name = await get_pod_name(ops_test, CHARM_NAME)
     rcode, out, _ = await ops_test.run(
@@ -213,17 +212,39 @@ async def test_container_privileges(ops_test: OpsTest, container: str):
         f"-n{ops_test.model_name}",
         f"{pod_name}",
         "-c",
-        f"{container}",
+        f"{container_name}",
         "--",
         "pgrep",
         "-u",
-        f"{CONTAINERS_UID_MAP.get(container)}",
+        f"{CONTAINERS_UID_MAP.get(container_name).get("uid")}",
         "pebble",
     )
     # assert return code is zero, meaning pebble is run by expected user
     assert rcode == 0
     # assert stdout contains pebble PID (always 1)
     assert out.strip() == "1"
+
+
+@pytest.mark.parametrize("container_name", list(CONTAINERS_UID_MAP.keys()))
+@pytest.mark.abort_on_fail
+async def test_container_security_context(
+    ops_test: OpsTest,
+    lightkube_client: lightkube.Client,
+    container_name: str,
+):
+    """Test container security context is correctly set.
+
+    Verify that container spec defines the security context with correct
+    user ID and group ID.
+    """
+    pod_name = await get_pod_name(ops_test, CHARM_NAME)
+    containers: list = lightkube_client.get(Pod, pod_name, namespace="kubeflow").spec.containers
+    container = next((c for c in containers if c.name == container_name), None)
+    security_context = container.securityContext
+    # assert user ID is the one defined in metadata.yaml
+    assert security_context.runAsUser == CONTAINERS_UID_MAP.get(container_name).get("uid")
+    # assert group ID is the one defined in metadata.yaml
+    assert security_context.runAsGroup == CONTAINERS_UID_MAP.get(container_name).get("gid")
 
 
 @pytest.mark.abort_on_fail
