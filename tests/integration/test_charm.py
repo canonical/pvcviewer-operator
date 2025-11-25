@@ -17,10 +17,15 @@ from charmed_kubeflow_chisme.testing import (
     deploy_and_assert_grafana_agent,
     get_alert_rules,
 )
+from charmed_kubeflow_chisme.testing.charm_security_context import (
+    assert_security_context,
+    generate_container_uid_map,
+    get_pod_names,
+)
 from charms_dependencies import ISTIO_GATEWAY, ISTIO_PILOT
 from lightkube import codecs
 from lightkube.generic_resource import create_namespaced_resource
-from lightkube.resources.core_v1 import Pod, Service
+from lightkube.resources.core_v1 import Service
 from pytest_operator.plugin import OpsTest
 from tenacity import retry, stop_after_delay, wait_fixed
 
@@ -28,6 +33,7 @@ logger = logging.getLogger(__name__)
 
 METADATA = yaml.safe_load(Path("./metadata.yaml").read_text())
 CHARM_NAME = METADATA["name"]
+CONTAINERS_UID_MAP = generate_container_uid_map(METADATA)
 
 EXAMPLE_FILE = "./tests/integration/pvcviewer_example/pvcviewer_example.yaml"
 EXAMPLE_PATH = "/pvcviewer/kubeflow-user-example-com/pvcviewer-sample/files/"
@@ -174,57 +180,6 @@ async def test_pvcviewer_example(ops_test: OpsTest, lightkube_client: lightkube.
     assert len(result_text) > 0
 
 
-async def get_pod_name(ops_test: OpsTest, charm_name: str) -> str:
-    """Retrieve name of the pod for the given charm."""
-    _, out, _ = await ops_test.run(
-        "kubectl",
-        "get",
-        "pods",
-        f"-n{ops_test.model_name}",
-        f"-lapp.kubernetes.io/name={charm_name}",
-        "--no-headers",
-    )
-    return out.split()[0]
-
-
-def generate_container_uid_map():
-    c_uid_map = {}
-    for k, v in METADATA["containers"].items():
-        c_uid_map[k] = {"uid": v.get("uid"), "gid": v.get("gid")}
-    c_uid_map["charm"] = {"uid": 170, "gid": 170}
-    return c_uid_map
-
-
-CONTAINERS_UID_MAP = generate_container_uid_map()
-
-
-@pytest.mark.parametrize("container_name", list(CONTAINERS_UID_MAP.keys()))
-@pytest.mark.abort_on_fail
-async def test_container_privileges(ops_test: OpsTest, container_name: str):
-    """Test pebble process is run as the expected non-user.
-
-    Verify that Pebble process is run as the user defined in metadata.
-    """
-    pod_name = await get_pod_name(ops_test, CHARM_NAME)
-    rcode, out, _ = await ops_test.run(
-        "kubectl",
-        "exec",
-        f"-n{ops_test.model_name}",
-        f"{pod_name}",
-        "-c",
-        f"{container_name}",
-        "--",
-        "pgrep",
-        "-u",
-        f"{CONTAINERS_UID_MAP.get(container_name).get("uid")}",
-        "pebble",
-    )
-    # assert return code is zero, meaning pebble is run by expected user
-    assert rcode == 0
-    # assert stdout contains pebble PID (always 1)
-    assert out.strip() == "1"
-
-
 @pytest.mark.parametrize("container_name", list(CONTAINERS_UID_MAP.keys()))
 @pytest.mark.abort_on_fail
 async def test_container_security_context(
@@ -237,14 +192,10 @@ async def test_container_security_context(
     Verify that container spec defines the security context with correct
     user ID and group ID.
     """
-    pod_name = await get_pod_name(ops_test, CHARM_NAME)
-    containers: list = lightkube_client.get(Pod, pod_name, namespace="kubeflow").spec.containers
-    container = next((c for c in containers if c.name == container_name), None)
-    security_context = container.securityContext
-    # assert user ID is the one defined in metadata.yaml
-    assert security_context.runAsUser == CONTAINERS_UID_MAP.get(container_name).get("uid")
-    # assert group ID is the one defined in metadata.yaml
-    assert security_context.runAsGroup == CONTAINERS_UID_MAP.get(container_name).get("gid")
+    pod_name = get_pod_names(ops_test.model.name, CHARM_NAME)[0]
+    assert_security_context(
+        lightkube_client, pod_name, container_name, CONTAINERS_UID_MAP, ops_test.model.name
+    )
 
 
 @pytest.mark.abort_on_fail
