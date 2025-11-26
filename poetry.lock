@@ -560,7 +560,7 @@ test = ["black", "pytest"]
 type = "git"
 url = "https://github.com/canonical/charmed-kubeflow-chisme.git"
 reference = "KF-8193-nonroot-utilities"
-resolved_reference = "3dd2bf4ab586d740a70cac8126e14f5766227f85"
+resolved_reference = "25beb2a32e25e5edf6316ae0306b7977cba0bc37"
 
 [[package]]
 name = "charset-normalizer"

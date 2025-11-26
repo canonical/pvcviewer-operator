@@ -19,7 +19,7 @@ from charmed_kubeflow_chisme.testing import (
 )
 from charmed_kubeflow_chisme.testing.charm_security_context import (
     assert_security_context,
-    generate_container_uid_map,
+    generate_container_securitycontext_map,
     get_pod_names,
 )
 from charms_dependencies import ISTIO_GATEWAY, ISTIO_PILOT
@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 METADATA = yaml.safe_load(Path("./metadata.yaml").read_text())
 CHARM_NAME = METADATA["name"]
-CONTAINERS_UID_MAP = generate_container_uid_map(METADATA)
+CONTAINERS_SECURITY_CONTEXT_MAP = generate_container_securitycontext_map(METADATA)
 
 EXAMPLE_FILE = "./tests/integration/pvcviewer_example/pvcviewer_example.yaml"
 EXAMPLE_PATH = "/pvcviewer/kubeflow-user-example-com/pvcviewer-sample/files/"
@@ -180,7 +180,7 @@ async def test_pvcviewer_example(ops_test: OpsTest, lightkube_client: lightkube.
     assert len(result_text) > 0
 
 
-@pytest.mark.parametrize("container_name", list(CONTAINERS_UID_MAP.keys()))
+@pytest.mark.parametrize("container_name", list(CONTAINERS_SECURITY_CONTEXT_MAP.keys()))
 @pytest.mark.abort_on_fail
 async def test_container_security_context(
     ops_test: OpsTest,
@@ -194,7 +194,11 @@ async def test_container_security_context(
     """
     pod_name = get_pod_names(ops_test.model.name, CHARM_NAME)[0]
     assert_security_context(
-        lightkube_client, pod_name, container_name, CONTAINERS_UID_MAP, ops_test.model.name
+        lightkube_client,
+        pod_name,
+        container_name,
+        CONTAINERS_SECURITY_CONTEXT_MAP,
+        ops_test.model.name,
     )
 
 
