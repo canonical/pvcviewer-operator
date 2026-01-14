@@ -39,7 +39,8 @@ from ops.charm import CharmBase
 from ops.framework import StoredState
 
 from certs import gen_certs
-from components.pebble_component import PvcViewerPebbleService
+from components.pebble_component import PvcViewerInputs, PvcViewerPebbleService
+from components.service_mesh_component import ServiceMeshComponent
 
 logger = logging.getLogger(__name__)
 
@@ -128,6 +129,10 @@ class PvcViewer(CharmBase):
         with tempfile.NamedTemporaryFile(delete=False) as ca_file:
             ca_file.write(self._stored.ca.encode("utf-8"))
 
+        self.service_mesh = self.charm_reconciler.add(
+            component=ServiceMeshComponent(charm=self, name="service-mesh")
+        )
+
         # Use the temporary file paths as source_template_path
         self.pebble_service_container = self.charm_reconciler.add(
             component=PvcViewerPebbleService(
@@ -149,8 +154,13 @@ class PvcViewer(CharmBase):
                         destination_path=f"{CERTS_FOLDER}/tls.ca",
                     ),
                 ],
+                inputs_getter=lambda: PvcViewerInputs(
+                    istio_ambient=self.service_mesh.component.is_ambient_mesh_enabled(),
+                    gateway_name=self.service_mesh.component.get_gateway_name(),
+                    gateway_namespace=self.service_mesh.component.get_gateway_namespace(),
+                ),
             ),
-            depends_on=[self.kubernetes_resources],
+            depends_on=[self.kubernetes_resources, self.service_mesh],
         )
 
         self.charm_reconciler.install_default_event_handlers()

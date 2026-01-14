@@ -20,14 +20,32 @@ resources:
   oci-image:
     type: oci-image
     description: Backing OCI image
-    upstream-source: charmedkubeflow/pvcviewer-controller:1.10.0-09b616f
+    upstream-source: kimwnasptd/pvcviewer-controller:ambient2
 requires:
   logging:
     interface: loki_push_api
     optional: true
+  service-mesh:
+    limit: 1
+    interface: service_mesh
+    description: |
+      Subscribe this charm into a service mesh to enforce authorization policies.
+  require-cmr-mesh:
+    interface: cross_model_mesh
+    description: |
+      Allow a cross-model application access to catalogue via the service mesh.
+      This relation provides additional data required by the service mesh to enforce cross-model authorization policies.
+  gateway-metadata:
+    interface: gateway_metadata
+    limit: 1
 provides:
   metrics-endpoint:
     interface: prometheus_scrape
   grafana-dashboard:
     interface: grafana_dashboard
+  provide-cmr-mesh:
+    interface: cross_model_mesh
+    description: |
+      Access a cross-model application from catalogue via the service mesh.
+      This relation provides additional data required by the service mesh to enforce cross-model authorization policies.
 charm-user: non-root
