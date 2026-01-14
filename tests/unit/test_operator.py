@@ -18,12 +18,10 @@ def harness() -> Harness:
 
 @pytest.fixture()
 def mocked_lightkube_client(mocker):
-    """Mocks the Lightkube Client in charm.py and service_mesh_component.py, returning a mock instead."""
+    """Mocks the Lightkube Client in charm.py and service_mesh_component.py, returning a mock."""
     mocked_lightkube_client = MagicMock()
     mocker.patch("charm.lightkube.Client", return_value=mocked_lightkube_client)
-    mocker.patch(
-        "components.service_mesh_component.Client", return_value=mocked_lightkube_client
-    )
+    mocker.patch("components.service_mesh_component.Client", return_value=mocked_lightkube_client)
     yield mocked_lightkube_client
 
 
@@ -51,7 +49,12 @@ def mocked_service_mesh_component(mocker):
     yield mock
 
 
-def test_metrics(harness, mocked_lightkube_client, mocked_kubernetes_service_patch, mocked_service_mesh_component):
+def test_metrics(
+    harness,
+    mocked_lightkube_client,
+    mocked_kubernetes_service_patch,
+    mocked_service_mesh_component,
+):
     """Test MetricsEndpointProvider initialization."""
     with patch("charm.MetricsEndpointProvider") as mock_metrics:
         harness.begin()
@@ -61,21 +64,36 @@ def test_metrics(harness, mocked_lightkube_client, mocked_kubernetes_service_pat
         )
 
 
-def test_grafana_dashboard(harness, mocked_lightkube_client, mocked_kubernetes_service_patch, mocked_service_mesh_component):
+def test_grafana_dashboard(
+    harness,
+    mocked_lightkube_client,
+    mocked_kubernetes_service_patch,
+    mocked_service_mesh_component,
+):
     """Test GrafanaDashboardProvider initialization."""
     with patch("charm.GrafanaDashboardProvider") as mock_grafana:
         harness.begin()
         mock_grafana.assert_called_once_with(harness.charm)
 
 
-def test_log_forwarding(harness, mocked_lightkube_client, mocked_kubernetes_service_patch, mocked_service_mesh_component):
+def test_log_forwarding(
+    harness,
+    mocked_lightkube_client,
+    mocked_kubernetes_service_patch,
+    mocked_service_mesh_component,
+):
     """Test LogForwarder initialization."""
     with patch("charm.LogForwarder") as mock_logging:
         harness.begin()
         mock_logging.assert_called_once_with(charm=harness.charm)
 
 
-def test_not_leader(harness, mocked_lightkube_client, mocked_kubernetes_service_patch, mocked_service_mesh_component):
+def test_not_leader(
+    harness,
+    mocked_lightkube_client,
+    mocked_kubernetes_service_patch,
+    mocked_service_mesh_component,
+):
     """Test when we are not the leader."""
     harness.begin_with_initial_hooks()
     # Assert that we are not Active, and that the leadership-gate is the cause.
@@ -141,7 +159,12 @@ def test_pebble_services_running(
     assert service.is_running()
 
 
-def test_get_certs(harness, mocked_lightkube_client, mocked_kubernetes_service_patch, mocked_service_mesh_component):
+def test_get_certs(
+    harness,
+    mocked_lightkube_client,
+    mocked_kubernetes_service_patch,
+    mocked_service_mesh_component,
+):
     """Test certs generated on init."""
     # Act
     harness.begin()
