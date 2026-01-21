@@ -59,6 +59,10 @@ jobs:
   integration:
     name: Integration tests
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        test-type: [integration, integration-ambient]
     steps:
     - name: Maximise GH runner space
       uses: easimon/maximize-build-space@v7
@@ -79,9 +83,9 @@ jobs:
         sudo rm -rf /run/containerd
         sudo snap install concierge --classic
         sudo concierge prepare --trace
-    - name: Run integration tests
+    - name: Run  ${{ matrix.test-type }} tests
       # Running with kubeflow model because of upstream issue https://github.com/kubeflow/kubeflow/issues/7283
-      run: tox -vve integration -- --model kubeflow
+      run: tox -vve ${{ matrix.test-type }} -- --model kubeflow
 
     # On failure, capture debugging resources      
     - name: Get all
