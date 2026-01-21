@@ -145,10 +145,8 @@ def test_pebble_services_running(
     # * leadership_gate to have get_status=>Active
     # * object_storage_relation to return mock data, making the item go active
     # * kubernetes_resources to have get_status=>Active
-    # * service_mesh to have get_status=>Active
     harness.charm.leadership_gate.get_status = MagicMock(return_value=ActiveStatus())
     harness.charm.kubernetes_resources.get_status = MagicMock(return_value=ActiveStatus())
-    harness.charm.service_mesh.get_status = MagicMock(return_value=ActiveStatus())
 
     # Act
     harness.charm.on.install.emit()
@@ -254,7 +252,6 @@ def test_pebble_layer_environment(
     # Mock components
     harness.charm.leadership_gate.get_status = MagicMock(return_value=ActiveStatus())
     harness.charm.kubernetes_resources.get_status = MagicMock(return_value=ActiveStatus())
-    harness.charm.service_mesh.get_status = MagicMock(return_value=ActiveStatus())
 
     # Mock mesh mode
     harness.charm.service_mesh.component.is_ambient_mesh_enabled = MagicMock(
