@@ -131,7 +131,7 @@ class PvcViewer(CharmBase):
 
         self.service_mesh = self.charm_reconciler.add(
             component=ServiceMeshComponent(charm=self, name="service-mesh"),
-            depends_on=[self.leadership_gate]
+            depends_on=[self.leadership_gate],
         )
 
         # Use the temporary file paths as source_template_path
