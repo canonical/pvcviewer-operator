@@ -20,6 +20,8 @@ resources:
   oci-image:
     type: oci-image
     description: Backing OCI image
+    # TODO: Replace image with upstream image or rock
+    # once https://github.com/kubeflow/notebooks/pull/628 is merged
     upstream-source: kimwnasptd/pvcviewer-controller:ambient2
 requires:
   logging:
