@@ -306,8 +306,8 @@ def test_service_mesh_waiting_status(
     harness.begin()
 
     # Add gateway-metadata relation
-    relation_id = harness.add_relation("gateway-metadata", "istio-beacon")
-    harness.add_relation_unit(relation_id, "istio-beacon/0")
+    relation_id = harness.add_relation("gateway-metadata", "istio-ingress-k8s")
+    harness.add_relation_unit(relation_id, "istio-ingress-k8s/0")
 
     # Mock the gateway metadata to return None (data not ready)
     harness.charm.service_mesh.component._gateway_metadata_requirer.get_metadata = MagicMock(
@@ -333,8 +333,8 @@ def test_service_mesh_active_status_with_gateway_data(
     harness.begin()
 
     # Add gateway-metadata relation
-    relation_id = harness.add_relation("gateway-metadata", "istio-beacon")
-    harness.add_relation_unit(relation_id, "istio-beacon/0")
+    relation_id = harness.add_relation("gateway-metadata", "istio-ingress-k8s")
+    harness.add_relation_unit(relation_id, "istio-ingress-k8s/0")
 
     # Mock the gateway metadata to return valid data
     mock_metadata = Mock()
