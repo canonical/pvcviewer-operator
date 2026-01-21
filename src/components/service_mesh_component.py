@@ -35,10 +35,14 @@ class ServiceMeshComponent(Component):
 
         # Observe relation changed events for both relations
         self._events_to_observe = [
-            self._charm.on[relation_name].relation_changed
+            event
             for relation_name in [
                 self._service_mesh_relation_name,
                 self._gateway_metadata_relation_name,
+            ]
+            for event in [
+                self._charm.on[relation_name].relation_changed,
+                self._charm.on[relation_name].relation_broken,
             ]
         ]
 
@@ -77,9 +81,17 @@ class ServiceMeshComponent(Component):
 
     def _configure_app_leader(self, event):
         """Reconcile the allow-all policy when the app is leader."""
-        logger.info("Reconciling PRM")
+        policies = []
+
+        # create the allow-all policy only when related to ambient
+        if self.is_ambient_mesh_enabled():
+            logger.info("Integrated with ambient mesh, will create allow-all policy")
+            policies.append(self._allow_all_policy)
+        else:
+            logger.info("Not integrated with ambient mesh, skipping allow-all policy creation")
+
         self._policy_resource_manager.reconcile(
-            policies=[], mesh_type=MeshType.istio, raw_policies=[self._allow_all_policy]
+            policies=[], mesh_type=MeshType.istio, raw_policies=policies
         )
 
     def get_gateway_metadata(self) -> Tuple[str, str]:

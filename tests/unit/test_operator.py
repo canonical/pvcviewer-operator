@@ -350,3 +350,43 @@ def test_service_mesh_active_status_with_gateway_data(
 
     # Assert
     assert isinstance(status, ActiveStatus)
+
+
+def test_gateway_metadata_relation_broken_returns_to_sidecar_mode(
+    harness, mocked_lightkube_client, mocked_kubernetes_service_patch
+):
+    """Test that breaking gateway-metadata relation returns to sidecar mode defaults."""
+    # Arrange
+    harness.set_leader(True)
+    harness.begin()
+
+    # Add gateway-metadata relation with ambient mode data
+    relation_id = harness.add_relation("gateway-metadata", "istio-ingress-k8s")
+    harness.add_relation_unit(relation_id, "istio-ingress-k8s/0")
+
+    # Mock the gateway metadata to return ambient data
+    mock_metadata = Mock()
+    mock_metadata.namespace = "istio-system"
+    mock_metadata.gateway_name = "istio-gateway"
+
+    harness.charm.service_mesh.component._gateway_metadata_requirer.get_metadata = MagicMock(
+        return_value=mock_metadata
+    )
+
+    # Verify ambient mode is active
+    assert harness.charm.service_mesh.component.is_ambient_mesh_enabled() is True
+    assert harness.charm.service_mesh.component.get_gateway_name() == "istio-gateway"
+    assert harness.charm.service_mesh.component.get_gateway_namespace() == "istio-system"
+
+    # Act - Remove the relation
+    harness.remove_relation(relation_id)
+
+    # Clear the mock to simulate no relation data after removal
+    harness.charm.service_mesh.component._gateway_metadata_requirer.get_metadata = MagicMock(
+        return_value=None
+    )
+
+    # Assert - Should return to sidecar defaults
+    assert harness.charm.service_mesh.component.is_ambient_mesh_enabled() is False
+    assert harness.charm.service_mesh.component.get_gateway_name() == "kubeflow-gateway"
+    assert harness.charm.service_mesh.component.get_gateway_namespace() == "kubeflow"
