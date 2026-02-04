@@ -3,11 +3,11 @@
 from charmed_kubeflow_chisme.testing import CharmSpec
 
 ISTIO_GATEWAY = CharmSpec(
-    charm="istio-gateway", channel="latest/edge", config={"kind": "ingress"}, trust=True
+    charm="istio-gateway", channel="1.24/stbale", config={"kind": "ingress"}, trust=True
 )
 ISTIO_PILOT = CharmSpec(
     charm="istio-pilot",
-    channel="latest/edge",
+    channel="1.24/stbale",
     config={"default-gateway": "kubeflow-gateway"},
     trust=True,
 )
