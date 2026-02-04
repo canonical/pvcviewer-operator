@@ -14,9 +14,13 @@ from charmed_kubeflow_chisme.testing import (
     assert_alert_rules,
     assert_logging,
     assert_metrics_endpoint,
+    assert_security_context,
     deploy_and_assert_grafana_agent,
+    generate_container_securitycontext_map,
     get_alert_rules,
+    get_pod_names,
 )
+from charms_dependencies import ISTIO_GATEWAY, ISTIO_PILOT
 from lightkube import codecs
 from lightkube.generic_resource import create_namespaced_resource
 from lightkube.resources.core_v1 import Service
@@ -27,12 +31,8 @@ logger = logging.getLogger(__name__)
 
 METADATA = yaml.safe_load(Path("./metadata.yaml").read_text())
 CHARM_NAME = METADATA["name"]
+CONTAINERS_SECURITY_CONTEXT_MAP = generate_container_securitycontext_map(METADATA)
 
-ISTIO_GATEWAY_CHARM_NAME = "istio-gateway"
-ISTIO_PILOT_CHARM_NAME = "istio-pilot"
-ISTIO_PILOT_VERSION = "1.24/stable"
-ISTIO_GATEWAY_VERSION = "1.24/stable"
-ISTIO_GATEWAY_NAME = "kubeflow-gateway"
 EXAMPLE_FILE = "./tests/integration/pvcviewer_example/pvcviewer_example.yaml"
 EXAMPLE_PATH = "/pvcviewer/kubeflow-user-example-com/pvcviewer-sample/files/"
 
@@ -100,21 +100,21 @@ async def test_build_and_deploy(ops_test: OpsTest):
 
     # Deploy istio-operators for ingress configuration
     await ops_test.model.deploy(
-        ISTIO_PILOT_CHARM_NAME,
-        channel=ISTIO_PILOT_VERSION,
-        config={"default-gateway": ISTIO_GATEWAY_NAME},
-        trust=True,
+        ISTIO_PILOT.charm,
+        channel=ISTIO_PILOT.channel,
+        config=ISTIO_PILOT.config,
+        trust=ISTIO_PILOT.trust,
     )
 
     await ops_test.model.deploy(
-        ISTIO_GATEWAY_CHARM_NAME,
-        channel=ISTIO_GATEWAY_VERSION,
-        config={"kind": "ingress"},
-        trust=True,
+        ISTIO_GATEWAY.charm,
+        channel=ISTIO_GATEWAY.channel,
+        config=ISTIO_GATEWAY.config,
+        trust=ISTIO_GATEWAY.trust,
     )
-    await ops_test.model.integrate(ISTIO_PILOT_CHARM_NAME, ISTIO_GATEWAY_CHARM_NAME)
+    await ops_test.model.integrate(ISTIO_PILOT.charm, ISTIO_GATEWAY.charm)
     await ops_test.model.wait_for_idle(
-        [ISTIO_PILOT_CHARM_NAME, ISTIO_GATEWAY_CHARM_NAME],
+        [ISTIO_PILOT.charm, ISTIO_GATEWAY.charm],
         raise_on_blocked=False,
         status="active",
         timeout=900,
@@ -176,6 +176,28 @@ async def test_pvcviewer_example(ops_test: OpsTest, lightkube_client: lightkube.
     # verify that UI is accessible
     assert result_status == 200
     assert len(result_text) > 0
+
+
+@pytest.mark.parametrize("container_name", list(CONTAINERS_SECURITY_CONTEXT_MAP.keys()))
+@pytest.mark.abort_on_fail
+async def test_container_security_context(
+    ops_test: OpsTest,
+    lightkube_client: lightkube.Client,
+    container_name: str,
+):
+    """Test container security context is correctly set.
+
+    Verify that container spec defines the security context with correct
+    user ID and group ID.
+    """
+    pod_name = get_pod_names(ops_test.model.name, CHARM_NAME)[0]
+    assert_security_context(
+        lightkube_client,
+        pod_name,
+        container_name,
+        CONTAINERS_SECURITY_CONTEXT_MAP,
+        ops_test.model.name,
+    )
 
 
 @pytest.mark.abort_on_fail
