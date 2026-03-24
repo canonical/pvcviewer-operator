@@ -271,9 +271,9 @@ def test_pebble_layer_environment(
 
     env = plan.services["pvcviewer-operator"].environment
     assert env["USE_ISTIO"] == expected_use_istio
-    assert env["USE_GATEWAY_API"] == expected_use_gateway_api
-    assert env["K8S_GATEWAY_NAME"] == gateway_name
-    assert env["K8S_GATEWAY_NAMESPACE"] == gateway_namespace
+    assert env["EXPERIMENTAL_USE_GATEWAY_API"] == expected_use_gateway_api
+    assert env["EXPERIMENTAL_K8S_GATEWAY_NAME"] == gateway_name
+    assert env["EXPERIMENTAL_K8S_GATEWAY_NAMESPACE"] == gateway_namespace
 
 
 def test_service_mesh_blocked_status(
