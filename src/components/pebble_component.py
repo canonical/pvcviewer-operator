@@ -40,12 +40,12 @@ class PvcViewerPebbleService(PebbleServiceComponent):
                         "command": "/manager --health-probe-bind-address=:8081 --metrics-bind-address=:8080 --leader-elect",  # noqa: E501
                         "startup": "enabled",
                         "environment": {
-                            # Sidecar mode: USE_ISTIO=true, USE_GATEWAY_API=false
-                            # Ambient mode: USE_ISTIO=false, USE_GATEWAY_API=true
+                            # Sidecar mode: USE_ISTIO=true, EXPERIMENTAL_USE_GATEWAY_API=false
+                            # Ambient mode: USE_ISTIO=false, EXPERIMENTAL_USE_GATEWAY_API=true
                             "USE_ISTIO": str(not inputs.istio_ambient).lower(),
-                            "USE_GATEWAY_API": str(inputs.istio_ambient).lower(),
-                            "K8S_GATEWAY_NAME": inputs.gateway_name,
-                            "K8S_GATEWAY_NAMESPACE": inputs.gateway_namespace,
+                            "EXPERIMENTAL_USE_GATEWAY_API": str(inputs.istio_ambient).lower(),
+                            "EXPERIMENTAL_K8S_GATEWAY_NAME": inputs.gateway_name,
+                            "EXPERIMENTAL_K8S_GATEWAY_NAMESPACE": inputs.gateway_namespace,
                         },
                     }
                 },
