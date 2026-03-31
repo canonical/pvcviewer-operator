@@ -20,7 +20,13 @@ resources:
   oci-image:
     type: oci-image
     description: Backing OCI image
+<<<<<<< HEAD
     upstream-source: charmedkubeflow/pvcviewer-controller:1.10.0-09b616f
+=======
+    # TODO: Replace image with upstream image or rock
+    # once https://github.com/kubeflow/notebooks/pull/628 is merged
+    upstream-source: docker.io/charmedkubeflow/pvcviewer-controller:1.11.0-rc.1-ambient-64d4045
+>>>>>>> 069b459 (chore: integrate rock image pvcviewer-controller:1.11.0-rc.1-ambient-64d4045 (#139))
 requires:
   logging:
     interface: loki_push_api
