@@ -179,17 +179,3 @@ jobs:
       - name: Get pvcviewer-operator operator logs
         run: kubectl logs --tail 100 -nkubeflow -ljuju-operator=pvcviewer-operator
         if: failure()
-
-      - name: Generate inspect tarball
-        run: >
-          sudo microk8s inspect |
-          grep -Po "Report tarball is at \K.+" |
-          sudo xargs -I {} mv {} inspection-report-${{ strategy.job-index }}.tar.gz
-        if: failure()
-
-      - name: Upload inspect tarball
-        uses: actions/upload-artifact@v4
-        with:
-          name: inspection-reports
-          path: ./inspection-report-${{ strategy.job-index }}.tar.gz
-        if: failure()
