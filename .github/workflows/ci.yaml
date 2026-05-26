@@ -144,9 +144,9 @@ jobs:
       - name: Configure Cilium for Canonical K8s
         if: matrix.test-type == 'integration-ambient'
         run: |
-          # Configure Cilium for Canonical K8s to work with Charmed Istio (Ambient mode)
-          # See https://canonical-service-mesh-documentation.readthedocs-hosted.com/en/latest/how-to/use-charmed-istio-with-canonical-kubernetes/
+          # for context, see https://docs.cilium.io/en/stable/network/servicemesh/istio/
           kubectl -n kube-system patch configmap cilium-config --type merge --patch '{"data":{"bpf-lb-sock-hostns-only":"true"}}'
+          kubectl -n kube-system patch configmap cilium-config --type merge --patch '{"data":{"cni-exclusive":"false"}}'
           kubectl -n kube-system rollout restart daemonset cilium
 
       - name: Download packed charm(s)
@@ -175,9 +175,9 @@ jobs:
         if: failure()
 
       - name: Get pvcviewer-operator workload logs
-        run: kubectl logs --tail 100 -nkubeflow -ljuju-app=pvcviewer-operator
+        run: kubectl logs --tail 100 -n kubeflow -l app.kubernetes.io/name=pvcviewer-operator -c pvcviewer-operator
         if: failure()
 
       - name: Get pvcviewer-operator operator logs
-        run: kubectl logs --tail 100 -nkubeflow -ljuju-operator=pvcviewer-operator
+        run: kubectl logs --tail 100 -n kubeflow -l app.kubernetes.io/name=pvcviewer-operator -c charm
         if: failure()
