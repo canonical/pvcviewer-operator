@@ -68,17 +68,21 @@ def deploy_example(lightkube_client: lightkube.Client):
 
 @pytest.mark.skip_if_deployed
 @pytest.mark.abort_on_fail
-async def test_build_and_deploy(ops_test: OpsTest):
+async def test_build_and_deploy(ops_test: OpsTest, request):
     """Build the charm-under-test and deploy it together with related charms.
 
     Assert on the unit status before any relations/configurations take place.
     """
 
-    charm_under_test = await ops_test.build_charm(".")
+    entity_url = (
+        await ops_test.build_charm(".")
+        if not (entity_url := request.config.getoption("--charm-path"))
+        else entity_url
+    )
     image_path = METADATA["resources"]["oci-image"]["upstream-source"]
     resources = {"oci-image": image_path}
     await ops_test.model.deploy(
-        charm_under_test, resources=resources, application_name=CHARM_NAME, trust=True
+        entity_url, resources=resources, application_name=CHARM_NAME, trust=True
     )
 
     await deploy_and_integrate_service_mesh_charms(
