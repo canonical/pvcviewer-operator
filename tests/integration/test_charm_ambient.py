@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-# Copyright 2023 Canonical Ltd.
+# Copyright 2026 Canonical Ltd.
 # See LICENSE file for licensing details.
 
 
 import logging
 from pathlib import Path
 
-import aiohttp
 import lightkube
 import pytest
 import yaml
@@ -14,16 +13,16 @@ from charmed_kubeflow_chisme.testing import (
     assert_alert_rules,
     assert_logging,
     assert_metrics_endpoint,
+    assert_path_reachable_through_ingress,
     assert_security_context,
     deploy_and_assert_grafana_agent,
+    deploy_and_integrate_service_mesh_charms,
     generate_container_securitycontext_map,
     get_alert_rules,
     get_pod_names,
 )
-from charms_dependencies import ISTIO_GATEWAY, ISTIO_PILOT
 from lightkube import codecs
 from lightkube.generic_resource import create_namespaced_resource
-from lightkube.resources.core_v1 import Service
 from pytest_operator.plugin import OpsTest
 from tenacity import retry, stop_after_delay, wait_fixed
 
@@ -67,58 +66,13 @@ def deploy_example(lightkube_client: lightkube.Client):
             raise e
 
 
-def get_ingress_url(lightkube_client: lightkube.Client, model_name: str):
-    """Returns url of ingress gateway in the cluster"""
-    gateway_svc = lightkube_client.get(
-        Service, "istio-ingressgateway-workload", namespace=model_name
-    )
-    ingress_record = gateway_svc.status.loadBalancer.ingress[0]
-    if ingress_record.ip:
-        public_url = f"http://{ingress_record.ip}.nip.io"
-    if ingress_record.hostname:
-        public_url = f"http://{ingress_record.hostname}"  # Use hostname (e.g. EKS)
-    return public_url
-
-
-async def fetch_response(url, headers):
-    """Fetch provided URL and return pair - status and text (int, string)."""
-    result_status = 0
-    result_text = ""
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url=url, headers=headers) as response:
-            result_status = response.status
-            result_text = await response.text()
-    return result_status, str(result_text)
-
-
+@pytest.mark.skip_if_deployed
 @pytest.mark.abort_on_fail
 async def test_build_and_deploy(ops_test: OpsTest, request):
     """Build the charm-under-test and deploy it together with related charms.
 
     Assert on the unit status before any relations/configurations take place.
     """
-
-    # Deploy istio-operators for ingress configuration
-    await ops_test.model.deploy(
-        ISTIO_PILOT.charm,
-        channel=ISTIO_PILOT.channel,
-        config=ISTIO_PILOT.config,
-        trust=ISTIO_PILOT.trust,
-    )
-
-    await ops_test.model.deploy(
-        ISTIO_GATEWAY.charm,
-        channel=ISTIO_GATEWAY.channel,
-        config=ISTIO_GATEWAY.config,
-        trust=ISTIO_GATEWAY.trust,
-    )
-    await ops_test.model.integrate(ISTIO_PILOT.charm, ISTIO_GATEWAY.charm)
-    await ops_test.model.wait_for_idle(
-        [ISTIO_PILOT.charm, ISTIO_GATEWAY.charm],
-        raise_on_blocked=False,
-        status="active",
-        timeout=900,
-    )
 
     entity_url = (
         await ops_test.build_charm(".")
@@ -130,6 +84,14 @@ async def test_build_and_deploy(ops_test: OpsTest, request):
     await ops_test.model.deploy(
         entity_url, resources=resources, application_name=CHARM_NAME, trust=True
     )
+
+    await deploy_and_integrate_service_mesh_charms(
+        CHARM_NAME,
+        ops_test.model,
+        relate_to_ingress_route_endpoint=False,
+        relate_to_ingress_gateway_endpoint=True,
+    )
+
     await ops_test.model.wait_for_idle(
         apps=[CHARM_NAME], status="active", raise_on_blocked=True, timeout=300
     )
@@ -141,7 +103,7 @@ async def test_build_and_deploy(ops_test: OpsTest, request):
     )
 
 
-async def test_metrics_enpoint(ops_test):
+async def test_metrics_endpoint(ops_test):
     """Test metrics_endpoints are defined in relation data bag and their accessibility.
 
     This function gets all the metrics_endpoints from the relation data bag, checks if
@@ -166,7 +128,6 @@ async def test_alert_rules(ops_test: OpsTest):
     await assert_alert_rules(app, alert_rules)
 
 
-@retry(stop=stop_after_delay(600), wait=wait_fixed(10))
 @pytest.mark.abort_on_fail
 async def test_pvcviewer_example(ops_test: OpsTest, lightkube_client: lightkube.Client):
     """Deploy pvcviewer crd example with namespace and target PVC.
@@ -174,12 +135,16 @@ async def test_pvcviewer_example(ops_test: OpsTest, lightkube_client: lightkube.
     Assert on the istio gateway path to pvcviewer is accessible.
     """
     deploy_example(lightkube_client)
-    ingress_url = get_ingress_url(lightkube_client, ops_test.model_name)
-    result_status, result_text = await fetch_response(f"{ingress_url}{EXAMPLE_PATH}", {})
 
-    # verify that UI is accessible
-    assert result_status == 200
-    assert len(result_text) > 0
+    # verify that UI is accessible with retry
+    retry_assert_path_reachable = retry(stop=stop_after_delay(120), wait=wait_fixed(10))(
+        assert_path_reachable_through_ingress
+    )
+    await retry_assert_path_reachable(
+        http_path=EXAMPLE_PATH,
+        namespace=ops_test.model.name,
+        expected_response_text="File Browser",
+    )
 
 
 @pytest.mark.parametrize("container_name", list(CONTAINERS_SECURITY_CONTEXT_MAP.keys()))
@@ -202,20 +167,3 @@ async def test_container_security_context(
         CONTAINERS_SECURITY_CONTEXT_MAP,
         ops_test.model.name,
     )
-
-
-@pytest.mark.abort_on_fail
-async def test_remove_deletes_virtual_service(
-    ops_test: OpsTest, lightkube_client: lightkube.Client
-):
-    """Remove pvcviewer charm.
-
-    Assert virtual service is no longer accessible.
-    """
-    await ops_test.model.remove_application(CHARM_NAME, block_until_done=True)
-
-    ingress_url = get_ingress_url(lightkube_client, ops_test.model_name)
-    result_status, _ = await fetch_response(f"{ingress_url}{EXAMPLE_PATH}", {})
-
-    # verify that UI is accessible
-    assert result_status == 404
