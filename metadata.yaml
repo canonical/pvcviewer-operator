@@ -14,6 +14,7 @@ docs: https://discourse.charmhub.io/t/8212
 containers:
   pvcviewer-operator:
     resource: oci-image
+    # TODO: Revert UID/GID to 584792 when switching to the final rock tagged 1.11.1-ambient.
     uid: 65532
     gid: 65532
 resources:
