@@ -14,15 +14,16 @@ docs: https://discourse.charmhub.io/t/8212
 containers:
   pvcviewer-operator:
     resource: oci-image
-    uid: 584792
-    gid: 584792
+    # TODO: Revert UID/GID to 584792 when switching to the final rock tagged 1.11.1-ambient.
+    uid: 65532
+    gid: 65532
 resources:
   oci-image:
     type: oci-image
     description: Backing OCI image
-    # TODO: Replace image with upstream image or rock
-    # once https://github.com/kubeflow/notebooks/pull/628 is merged
-    upstream-source: docker.io/charmedkubeflow/pvcviewer-controller:1.11.0-rc.1-ambient-64d4045
+    # Temporary ambient build from canonical/kubeflow-notebooks commit 2618bf8542fbaae6fcd323216fd719dbe24b0f0b0.
+    # TODO: Replace with the final rock tagged 1.11.1-ambient.
+    upstream-source: docker.io/nohaihab/pvcviewer-controller:tmp-v1.11.1-ambient-2618bf8
 requires:
   logging:
     interface: loki_push_api

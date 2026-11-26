@@ -16,10 +16,10 @@ from charmed_kubeflow_chisme.testing import (
     assert_path_reachable_through_ingress,
     assert_security_context,
     deploy_and_assert_grafana_agent,
-    deploy_and_integrate_service_mesh_charms,
     generate_container_securitycontext_map,
     get_alert_rules,
     get_pod_names,
+    integrate_with_service_mesh,
 )
 from lightkube import codecs
 from lightkube.generic_resource import create_namespaced_resource
@@ -34,6 +34,8 @@ CONTAINERS_SECURITY_CONTEXT_MAP = generate_container_securitycontext_map(METADAT
 
 EXAMPLE_FILE = "./tests/integration/pvcviewer_example/pvcviewer_example.yaml"
 EXAMPLE_PATH = "/pvcviewer/kubeflow-user-example-com/pvcviewer-sample/files/"
+
+ISTIO_CHANNEL = "1.31/stable"
 
 
 @pytest.fixture(scope="session")
@@ -85,7 +87,25 @@ async def test_build_and_deploy(ops_test: OpsTest, request):
         entity_url, resources=resources, application_name=CHARM_NAME, trust=True
     )
 
-    await deploy_and_integrate_service_mesh_charms(
+    # Deploy the service-mesh charms via the Juju CLI with an explicit channel.
+    # TODO: Replace this CLI workaround when migrating to Jubilant; python-libjuju used by
+    # pytest-operator does not support the Ubuntu 26.04 base used by these Istio charms.
+    for charm, options in (
+        ("istio-k8s", ("--config", "platform=")),
+        ("istio-ingress-k8s", ()),
+        ("istio-beacon-k8s", ("--config", "model-on-mesh=true")),
+    ):
+        await ops_test.juju(
+            "deploy", charm, "--channel", ISTIO_CHANNEL, "--trust", *options, check=True
+        )
+        await ops_test.model.wait_for_idle(
+            apps=[charm],
+            status="active",
+            raise_on_error=False,
+            timeout=900,
+        )
+
+    await integrate_with_service_mesh(
         CHARM_NAME,
         ops_test.model,
         relate_to_ingress_route_endpoint=False,
