@@ -88,6 +88,8 @@ async def test_build_and_deploy(ops_test: OpsTest, request):
     )
 
     # Deploy the service-mesh charms via the Juju CLI with an explicit channel.
+    # TODO: Replace this CLI workaround when migrating to Jubilant; python-libjuju used by
+    # pytest-operator does not support the Ubuntu 26.04 base used by these Istio charms.
     for charm, options in (
         ("istio-k8s", ("--config", "platform=")),
         ("istio-ingress-k8s", ()),
